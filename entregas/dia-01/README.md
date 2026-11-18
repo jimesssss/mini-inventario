@@ -2,7 +2,7 @@
 
 **Proyecto:** Mini Inventario
 
-**Fecha:** 18 de noviembre de 2026
+**Fecha:** 11 de noviembre de 2026
 
 **Repositorio:** https://github.com/jimesssss/mini-inventario
 
