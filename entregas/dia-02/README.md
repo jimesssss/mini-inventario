@@ -4,7 +4,7 @@
 
 \*\*Proyecto:\*\* Mini Inventario  
 
-\*\*Fecha:\*\* 12 de noviembre de 2026  
+\*\*Fecha:\*\* 12 de noviembre de 2026 
 
 \*\*Repositorio:\*\* https://github.com/jimesssss/mini-inventario  
 
