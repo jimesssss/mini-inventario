@@ -1,4 +1,4 @@
-\# Día 2 — Planeación del proyecto
+## Día 2 — Planeación del proyecto
 
 
 
