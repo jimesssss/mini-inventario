@@ -6,13 +6,13 @@
 
 **Repositorio:** https://github.com/jimesssss/mini-inventario
 
-**Rama de trabajo:** dia-02-planeacion
+**Rama de trabajo:** `dia-02-planeacion`
 
 ## 1. Objetivo
 
 Durante el Día 2 realicé la planeación de Mini Inventario. Definí las funciones que tendrá la aplicación, las tecnologías que voy a utilizar y cómo estará organizado el proyecto antes de comenzar a programarlo.
 
-También utilicé Codex para revisar los documentos y encontrar posibles errores o cosas que necesitaba mejorar.
+También utilicé Codex para revisar los documentos y encontrar posibles errores o aspectos que necesitaba mejorar.
 
 ## 2. Actividades realizadas
 
@@ -253,9 +253,9 @@ Tomé estas dos decisiones y aprobé sus justificaciones. Codex me ayudó a revi
 
 ## 9. Evidencias
 
-Las capturas de pantalla de las actividades se guardarán en la carpeta `entregas/dia-02/capturas/`.
+Las capturas de la planeación original se guardaron en la carpeta `entregas/dia-02/capturas/`.
 
-Las evidencias incluirán la creación de la rama, los documentos de planeación, las revisiones de Codex, las correcciones realizadas y la verificación de los archivos con Git.
+Registré los cambios en Git, subí la rama `dia-02-planeacion` a GitHub y abrí el PR #1. Después de fusionarlo con `main`, actualicé mi repositorio local y comprobé que no quedaran cambios pendientes de esa entrega.
 
 ### Evidencia disponible
 
@@ -276,6 +276,6 @@ En esta carpeta quedan pendientes capturas que muestren la documentación correg
 
 Durante el Día 2 terminé la planeación de Mini Inventario y definí las funciones que tendrá la aplicación.
 
-También seleccioné las tecnologías, preparé el diseño general y corregí varios detalles que encontré con ayuda de Codex.
+También seleccioné las tecnologías, preparé el diseño general y corregí varios detalles que encontré con ayuda de Codex. Guardé las evidencias de esas actividades.
 
 Con la documentación revisada, el proyecto quedó preparado para comenzar la programación durante el Día 3.
