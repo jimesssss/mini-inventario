@@ -3,7 +3,7 @@
 2. Utilizar Node.js 22 y Python 3.12.
 3. El servidor web utilizará Express.
 4. La interfaz utilizará HTML, CSS y JavaScript sin frameworks.
-5. La base de datos será Supabase PostgreSQL.
+5. La base de datos será SQLite.
 6. Antes de programar, revisar README.md y docs/.
 7. Explicar el plan antes de modificar archivos.
 8. Crear una rama Git para cada actividad o cambio.
