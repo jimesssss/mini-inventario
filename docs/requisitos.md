@@ -1,198 +1,49 @@
-﻿# Requisitos del proyecto Mini Inventario
+# Requisitos del proyecto Mini Inventario
 
+A partir del Día 4, Mini Inventario usará Supabase. La tabla `productos` tendrá los campos `id`, `user_id`, `nombre`, `sku`, `cantidad`, `minimo` y `created_at`. Cada usuario solo podrá consultar y modificar sus propios productos.
 
+## HU-01 — Registrar productos
 
-## 1. Descripción del proyecto
+Como usuario, quiero registrar productos para llevar un control de mi inventario.
 
+1. Al guardar un producto válido, el sistema asigna su `id`, lo vincula con el `user_id` del usuario autenticado, registra `created_at` y muestra el producto en su inventario.
+2. Si el nombre o el SKU queda vacío después de eliminar los espacios al inicio y al final, el sistema muestra un mensaje para el campo correspondiente e impide guardar. El SKU se conserva como texto, incluidos sus ceros iniciales.
+3. El sistema permite configurar el mínimo de cada producto y solo guarda la cantidad y el mínimo cuando ambos son enteros mayores o iguales a cero.
+4. Si el usuario ya tiene un producto con SKU `ABC-01`, el sistema rechaza `abc-01` en su inventario y muestra un mensaje de duplicado. Otro usuario puede registrar ese SKU en su propio inventario.
 
+## HU-02 — Consultar productos y sus existencias
 
-Mini Inventario será una aplicación web que permitirá registrar, consultar, buscar, modificar y eliminar productos de un inventario general.
+Como usuario, quiero consultar mis productos y sus existencias para saber cuáles debo reponer.
 
+1. Al abrir o recargar el inventario, el usuario ve únicamente sus productos guardados, con nombre, SKU, cantidad, mínimo y estado.
+2. Si la cantidad es cero, el producto aparece como **Agotado**, incluido el caso en que el mínimo también es cero.
+3. Si la cantidad es mayor que cero y menor o igual al mínimo del producto, aparece como **Existencias bajas** y se muestra una advertencia.
+4. Si la cantidad es mayor que cero y mayor que el mínimo del producto, aparece como **Disponible**.
+5. El indicador cuenta todos los productos del usuario en estado **Existencias bajas**, incluso cuando la búsqueda oculta algunos resultados.
 
+## HU-03 — Buscar productos
 
-La finalidad es facilitar la organización de los productos y llevar un control de las cantidades disponibles.
+Como usuario, quiero buscar mis productos por nombre o SKU para encontrar un registro rápidamente.
 
+1. Al escribir parte del nombre de un producto, se muestran las coincidencias de mi inventario sin distinguir mayúsculas y minúsculas.
+2. Al escribir un SKU completo, se encuentra la coincidencia exacta de mi inventario sin distinguir mayúsculas y minúsculas. Los SKU con un prefijo coincidente quedan fuera del resultado por SKU.
+3. Al vaciar el buscador, vuelven a mostrarse todos los productos de mi inventario.
+4. Si ningún producto de mi inventario coincide, el sistema muestra un mensaje indicando que no se encontraron productos.
 
+## HU-04 — Editar productos
 
-## 2. Objetivo
+Como usuario, quiero editar mis productos para mantener actualizados sus datos y sus existencias.
 
+1. Al abrir la edición de un producto propio, el formulario muestra el nombre, SKU, cantidad y mínimo guardados. Al guardar cambios válidos, el sistema actualiza ese producto y muestra el estado que corresponde a los nuevos valores.
+2. Si el nombre o el SKU queda vacío después de recortar espacios, o si la cantidad o el mínimo está vacío, es negativo o tiene decimales, el sistema muestra el error y conserva los datos guardados.
+3. El sistema permite conservar el SKU del producto editado. Si se usa el SKU de otro producto del mismo usuario, incluso con otras mayúsculas o minúsculas, el sistema muestra un mensaje de duplicado e impide guardar.
+4. Si el producto ya no existe o pertenece a otro usuario, el sistema indica que el producto no está disponible para editar y la operación termina sin cambios.
 
+## HU-05 — Eliminar productos
 
-Desarrollar una aplicación web sencilla para administrar productos, consultar sus datos y conocer sus existencias de manera rápida.
+Como usuario, quiero eliminar productos de mi inventario para retirar los registros que ya no necesito.
 
-
-
-## 3. Datos de los productos
-
-
-
-Cada producto tendrá la siguiente información:
-
-
-
-| Campo | Descripción |
-|---|---|
-| Código | Identificador único del producto. |
-| Nombre | Nombre del producto. |
-| Categoría | Tipo de producto al que pertenece. |
-| Cantidad | Número de unidades disponibles. |
-| Precio | Precio unitario en pesos mexicanos. |
-| Descripción | Información adicional del producto. |
-
-
-
-Además, cada producto tendrá un identificador interno para poder modificarlo sin confundirlo con otro registro.
-
-
-
-## 4. Requisitos funcionales
-
-
-
-**RF01. Registrar productos:** permitir agregar productos con sus datos correspondientes.
-
-
-
-**RF02. Consultar inventario:** mostrar todos los productos registrados en una tabla.
-
-
-
-**RF03. Buscar productos:** permitir buscar productos por nombre o código.
-
-
-
-**RF04. Editar productos:** permitir modificar los datos de un producto existente.
-
-
-
-**RF05. Eliminar productos:** permitir eliminar productos del inventario, solicitando una confirmación antes de realizar la operación.
-
-
-
-**RF06. Controlar existencias:** mostrar el estado de cada producto y el indicador de existencias bajas de todo el inventario según el apartado 8.5.
-
-
-
-## 5. Reglas del sistema
-
-Las reglas de registro, búsqueda, edición, eliminación y control de existencias se detallan en el apartado 8.
-
-## 6. Requisitos no funcionales
-
-
-
-- La aplicación debe ser fácil de utilizar.
-
-- Debe funcionar desde un navegador web.
-
-- La interfaz debe ser sencilla y ordenada.
-
-- Los datos deben conservarse después de cerrar la aplicación.
-
-- El sistema debe mostrar mensajes claros cuando ocurra un error.
-
-- La información de los productos se almacenará utilizando SQLite.
-
-- Antes de guardar un producto, tanto al registrarlo como al editarlo, la aplicación deberá validar los datos en el formulario y en el servidor.
-
-
-
-## 7. Resultado esperado
-
-
-
-Al finalizar el proyecto se espera contar con una aplicación web que permita administrar un inventario general, mantener los productos organizados y consultar sus existencias.
-
-
-
-El sistema contará con una interfaz para registrar, buscar, editar y eliminar productos.
-
-
-
-También permitirá identificar los productos con pocas existencias y conservar la información registrada en una base de datos SQLite.
-
-
-
-## 8. Reglas adicionales del inventario
-
-
-
-### 8.1. Registro de productos
-
-
-
-- El código, nombre y categoría serán obligatorios.
-
-- No se permitirá registrar códigos repetidos, aunque tengan diferentes mayúsculas o minúsculas.
-
-- Se eliminarán los espacios innecesarios al inicio y al final de los datos.
-
-- La cantidad deberá ser un número entero igual o mayor que cero.
-
-- El precio deberá ser igual o mayor que cero y tener máximo dos decimales.
-
-- La descripción será opcional.
-
-- Los códigos se manejarán como texto para conservar los ceros iniciales.
-
-
-
-### 8.2. Búsqueda de productos
-
-
-
-- La búsqueda por nombre permitirá coincidencias parciales.
-
-- La búsqueda no distinguirá entre mayúsculas y minúsculas.
-
-- La búsqueda por código permitirá localizar el código exacto.
-
-- Si el buscador está vacío, se mostrarán todos los productos.
-
-- Si no existen coincidencias, aparecerá un mensaje indicando que no se encontraron productos.
-
-
-
-### 8.3. Edición de productos
-
-
-
-- Al guardar los cambios se aplicarán las mismas reglas de validación que en el registro.
-
-- No se permitirá cambiar el código por uno que ya pertenezca a otro producto.
-
-- Si el producto ya no existe, el sistema mostrará un mensaje indicando que no se encontró.
-
-
-
-### 8.4. Eliminación de productos
-
-
-
-- El mensaje de confirmación incluirá el nombre o código del producto.
-
-- El usuario podrá confirmar o cancelar la operación.
-
-- Si confirma, el producto se eliminará definitivamente de la base de datos.
-
-- Si cancela, el producto permanecerá registrado.
-
-- Si el producto ya no existe, el sistema mostrará un mensaje informativo.
-
-
-
-### 8.5. Control de existencias
-
-
-
-- **Agotado** con 0 unidades.
-- **Existencias bajas** con 1 a 5 unidades. Se mostrará una advertencia.
-- **Disponible** con 6 o más unidades.
-- El indicador de existencias bajas contará únicamente los productos con 1 a 5 unidades de todo el inventario, incluso cuando se aplique una búsqueda.
-
-- Los indicadores generales mostrarán la información de todo el inventario.
-
-- La cantidad disponible se actualizará cuando se modifique un producto.
-
-
-
+1. Antes de eliminar un producto propio, el sistema muestra una confirmación que incluye su nombre o SKU.
+2. Si el usuario cancela, el producto sigue guardado y visible en su inventario.
+3. Si el usuario confirma, el producto se elimina de la base de datos y deja de aparecer en el inventario, incluso después de recargar la página.
+4. Si el producto ya no existe o pertenece a otro usuario, el sistema indica que el producto no está disponible para eliminar y la operación termina sin cambios.
