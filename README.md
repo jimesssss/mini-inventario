@@ -6,10 +6,16 @@ Proyecto de aplicación web para administrar productos y controlar sus existenci
 
 Desarrollar una aplicación que permita registrar, consultar, buscar, editar y eliminar productos y mostrar su estado de existencias.
 
+Cada producto tendrá un mínimo de existencias configurable.
+
 - **Agotado** con 0 unidades.
-- **Existencias bajas** con 1 a 5 unidades. Se mostrará una advertencia.
-- **Disponible** con 6 o más unidades.
-- El indicador de existencias bajas contará únicamente los productos con 1 a 5 unidades de todo el inventario, incluso cuando se aplique una búsqueda.
+- **Existencias bajas** cuando la cantidad sea mayor que cero y menor o igual al mínimo del producto. Se mostrará una advertencia.
+- **Disponible** cuando la cantidad sea mayor que cero y supere el mínimo del producto.
+- El indicador de existencias bajas contará todos los productos del usuario que cumplan esa condición, incluso cuando se aplique una búsqueda.
+
+## Modelo de productos
+
+La tabla `productos` tendrá los campos `id`, `user_id`, `nombre`, `sku`, `cantidad`, `minimo` y `created_at`. El SKU será único por usuario, sin distinguir mayúsculas y minúsculas.
 
 ## Tecnologías
 
@@ -17,7 +23,7 @@ Desarrollar una aplicación que permita registrar, consultar, buscar, editar y e
 - Python 3.12 (herramienta auxiliar)
 - Express
 - HTML, CSS y JavaScript
-- SQLite
+- Supabase (base de datos seleccionada, a partir del Día 4)
 - Git y GitHub
 - Codex
 - Playwright (para pruebas posteriores)
@@ -34,6 +40,8 @@ Desarrollar una aplicación que permita registrar, consultar, buscar, editar y e
 Día 1: preparación del entorno y repositorio.
 
 Día 2: definición de requisitos, selección de tecnologías y diseño de la aplicación.
+
+En la planeación se eligió SQLite. En una revisión posterior, el profesor indicó que el curso utilizará Supabase a partir del Día 4. Supabase es la base de datos seleccionada para el proyecto tras esa corrección.
 
 ## Evidencias
 
