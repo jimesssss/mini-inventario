@@ -1,122 +1,35 @@
-﻿# Tecnologías del proyecto Mini Inventario
+# Tecnologías del proyecto Mini Inventario
 
+## Tecnologías seleccionadas
 
+| Tecnología | Por qué se utilizará |
+| --- | --- |
+| HTML | Define la estructura de los formularios, botones y tablas del inventario. |
+| CSS | Organiza la pantalla y permite distinguir visualmente los estados de existencias. |
+| JavaScript | Valida los formularios en el navegador, envía solicitudes al servidor y actualiza la pantalla con los resultados. |
+| Node.js 22 | Ejecuta JavaScript en el servidor. |
+| Express | Organiza las rutas para registrar, consultar, buscar, editar y eliminar productos. |
+| Supabase | Almacena los productos en PostgreSQL y aplica restricciones de integridad y acceso por usuario. Se incorporará a partir del Día 4 por indicación del profesor. |
+| Python 3.12 | Se conserva como herramienta auxiliar para scripts de apoyo al desarrollo. |
+| Git | Registra el historial de cambios y permite trabajar en ramas. |
+| GitHub | Aloja el repositorio y permite revisar cambios mediante pull requests y organizar tareas con issues. |
+| Codex | Ayuda a revisar la documentación y el código, detectar errores y proponer correcciones que la autora puede verificar. |
 
-## 1. Introducción
+## Funcionamiento general
 
+1. En el navegador, el usuario puede registrar, consultar, buscar por nombre o SKU, editar y eliminar sus productos. JavaScript comprueba los campos del formulario y pide confirmación antes de enviar una solicitud de eliminación.
+2. Express recibe la solicitud, verifica la sesión de Supabase Auth, vuelve a validar los datos y se comunica con Supabase utilizando la identidad del usuario autenticado. Las consultas, búsquedas y modificaciones se limitan al inventario de ese usuario.
+3. Supabase guarda, consulta o modifica los productos y aplica las restricciones de la tabla y las políticas de seguridad por fila (RLS). Express devuelve el resultado o un mensaje de error para que el navegador lo muestre.
+4. El inventario muestra el estado de cada producto según su cantidad y su mínimo configurable. El indicador de existencias bajas cuenta todos los productos del usuario que estén en ese estado, incluso durante una búsqueda.
 
+## Datos e integridad
 
-Para desarrollar Mini Inventario se utilizarán diferentes herramientas que permitirán crear la interfaz, programar las funciones y guardar la información de los productos.
+La tabla `productos` tendrá los campos `id`, `user_id`, `nombre`, `sku`, `cantidad`, `minimo` y `created_at`.
 
+- `user_id` identifica al propietario. Las políticas RLS permiten que cada usuario autenticado consulte y gestione únicamente sus propios productos.
+- El nombre y el SKU son obligatorios. El SKU se guarda como texto para conservar los ceros iniciales y es único por usuario, sin distinguir mayúsculas y minúsculas.
+- La cantidad y el mínimo son enteros no negativos. El mínimo se configura por producto.
 
+## Antecedente
 
-Se eligieron tecnologías que son adecuadas para una aplicación web pequeña y que permiten trabajar de manera organizada.
-
-
-
-## 2. Tecnologías seleccionadas
-
-
-
-| Tecnología | Uso en el proyecto |
-|---|---|
-| HTML5 | Crear la estructura de las páginas y formularios. |
-| CSS3 | Dar estilo a la interfaz y organizar los elementos. |
-| JavaScript | Programar las funciones y la interacción con el usuario. |
-| Node.js 22 | Ejecutar JavaScript en el servidor. |
-| Express | Crear las rutas para registrar, consultar, editar y eliminar productos. |
-| SQLite | Almacenar los datos de los productos. |
-| Git | Llevar un historial de los cambios realizados. |
-| GitHub | Guardar el repositorio y compartir los avances. |
-| Codex | Apoyar en la revisión del código y la detección de errores. |
-
-
-
-## 3. Justificación de las tecnologías
-
-
-
-### HTML5 y CSS3
-
-
-
-Se utilizarán para crear la interfaz de la aplicación. HTML permitirá organizar los formularios, botones y tablas, mientras que CSS se encargará de los colores, tamaños y distribución de los elementos.
-
-
-
-### JavaScript
-
-
-
-Permitirá realizar acciones como buscar productos, validar formularios y mostrar mensajes al usuario.
-
-
-
-### Node.js y Express
-
-
-
-Node.js permitirá ejecutar el servidor de la aplicación y Express facilitará la creación de las rutas necesarias para administrar los productos.
-
-
-
-### SQLite
-
-
-
-Se utilizará como base de datos porque permite guardar información sin instalar un servidor de base de datos independiente.
-
-
-
-### Git y GitHub
-
-
-
-Se utilizarán para registrar los cambios del proyecto, trabajar con ramas y conservar los avances realizados durante el desarrollo.
-
-
-
-### Codex
-
-
-
-Se utilizará como apoyo para revisar archivos, identificar errores y proponer mejoras. Antes de aplicar cambios importantes, se revisarán sus recomendaciones.
-
-
-
-## 4. Funcionamiento general
-
-
-
-El usuario ingresará a la aplicación desde un navegador web.
-
-
-
-Desde la interfaz podrá registrar, consultar, buscar, editar y eliminar productos.
-
-
-
-JavaScript enviará las solicitudes al servidor desarrollado con Node.js y Express.
-
-
-
-El servidor procesará las solicitudes y utilizará SQLite para guardar o consultar la información.
-
-
-
-Finalmente, la aplicación mostrará los resultados al usuario.
-
-
-
-## 5. Conclusión
-
-
-
-Las tecnologías seleccionadas permitirán desarrollar una aplicación web sencilla para administrar un inventario general.
-
-
-
-Esta combinación facilitará la organización del proyecto y permitirá trabajar tanto en la interfaz como en el almacenamiento de datos.
-
-
-
+Durante la planeación inicial se eligió SQLite. Después de revisar la entrega, el profesor indicó que el curso utilizará Supabase a partir del Día 4. La selección del proyecto se actualizó a partir de esa observación.
