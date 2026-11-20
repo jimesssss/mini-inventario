@@ -9,7 +9,7 @@
 | JavaScript | Valida los formularios en el navegador, envía solicitudes al servidor y actualiza la pantalla con los resultados. |
 | Node.js 22 | Ejecuta JavaScript en el servidor. |
 | Express | Organiza las rutas para registrar, consultar, buscar, editar y eliminar productos. |
-| Supabase | Almacena los productos en PostgreSQL y aplica restricciones de integridad y acceso por usuario. Se incorporará a partir del Día 4 por indicación del profesor. |
+| Supabase | Desde el Día 3, almacena los productos en PostgreSQL, autentica a los usuarios con Supabase Auth y aplica restricciones de integridad y políticas RLS. |
 | Python 3.12 | Se conserva como herramienta auxiliar para scripts de apoyo al desarrollo. |
 | Git | Registra el historial de cambios y permite trabajar en ramas. |
 | GitHub | Aloja el repositorio y permite revisar cambios mediante pull requests y organizar tareas con issues. |
@@ -32,4 +32,4 @@ La tabla `productos` tendrá los campos `id`, `user_id`, `nombre`, `sku`, `canti
 
 ## Antecedente
 
-Durante la planeación inicial se eligió SQLite. Después de revisar la entrega, el profesor indicó que el curso utilizará Supabase a partir del Día 4. La selección del proyecto se actualizó a partir de esa observación.
+Durante la planeación inicial se eligió SQLite. En el Día 3, el proyecto adoptó Supabase PostgreSQL como única base de datos del inventario.

@@ -6,6 +6,12 @@
 # Dependencias de Node.js
 node_modules/
 
+# Archivos locales de SQLite
+*.db
+*.db-wal
+*.db-shm
+*.db-journal
+
 # Entorno virtual de Python
 .venv/
 venv/
@@ -17,3 +23,6 @@ __pycache__/
 # Archivos temporales
 *.log
 .DS_Store
+
+# Captura original del Día 3 con un correo personal
+/entregas/dia-03/evidencias/16-depurador-pausado.png

@@ -4,7 +4,7 @@
 
 Mini Inventario permitirá que cada usuario registre, consulte, busque, edite y elimine los productos de su propio inventario.
 
-En la planeación inicial se eligió SQLite. Después de revisar la entrega, el profesor indicó que el curso utilizará Supabase a partir del Día 4. Este diseño describe la arquitectura prevista para esa etapa.
+Este diseño describe la arquitectura del Día 3, con Supabase PostgreSQL como única base de datos, Supabase Auth para identificar al usuario y políticas de seguridad por fila (RLS) para limitar el acceso a sus productos.
 
 | Componente | Responsabilidad |
 | --- | --- |
@@ -34,7 +34,7 @@ El SKU será único por usuario, sin distinguir mayúsculas y minúsculas. Por e
 | --- | --- |
 | HU-01 · Registrar | El botón **Agregar producto** abre un formulario con nombre, SKU, cantidad y mínimo. Tras guardar, el producto aparece en el inventario del usuario. |
 | HU-02 · Consultar | Al abrir o recargar el inventario se muestran solo los productos guardados del usuario. La tabla presenta nombre, SKU, cantidad, mínimo y estado. |
-| HU-03 · Buscar | El buscador acepta coincidencias parciales por nombre o exactas por SKU, sin distinguir mayúsculas y minúsculas. Al vaciarlo se muestra todo el inventario del usuario. Si no hay coincidencias, se muestra un mensaje. |
+| HU-03 · Buscar | El buscador acepta coincidencias parciales por nombre o SKU, sin distinguir mayúsculas y minúsculas. Filtra en memoria el listado autenticado que devuelve Express. Al vaciarlo se restaura el listado completo. Si no hay coincidencias, se muestra un mensaje. |
 | HU-04 · Editar | Cada fila tiene un botón **Editar** que abre el formulario con los cuatro valores guardados. Al guardar valores válidos se actualizan la fila y su estado. Si hay un error de validación, se conservan los datos guardados. |
 | HU-05 · Eliminar | Cada fila tiene un botón **Eliminar**. La confirmación muestra el nombre o el SKU. Al cancelar, el producto sigue guardado. Al confirmar y completarse la operación, se elimina de la base de datos y deja de aparecer incluso después de recargar. |
 
@@ -43,10 +43,10 @@ El SKU será único por usuario, sin distinguir mayúsculas y minúsculas. Por e
 | Estado | Condición |
 | --- | --- |
 | Agotado | La cantidad es igual a cero, incluso si el mínimo también es cero. |
-| Existencias bajas | La cantidad es mayor que cero y menor o igual al mínimo. La tabla muestra una advertencia. |
-| Disponible | La cantidad es mayor que cero y supera el mínimo. |
+| Existencias bajas | La cantidad es mayor que cero y menor que el mínimo. La tabla muestra una advertencia. |
+| Disponible | La cantidad es mayor que cero e igual o superior al mínimo. |
 
-El estado se calcula con `cantidad` y `minimo`. El indicador de existencias bajas cuenta todos los productos del usuario en ese estado, incluso cuando la búsqueda oculta algunos resultados.
+El estado se calcula con `cantidad` y `minimo`. El contador y el resaltado aplican el umbral estricto `cantidad < minimo` sobre el inventario completo. Una fila agotada con mínimo positivo se incluye.
 
 ## 4. Validaciones por capa
 
@@ -58,7 +58,7 @@ El estado se calcula con `cantidad` y `minimo`. El indicador de existencias baja
 
 ### Servidor
 
-- Verificar la sesión de Supabase Auth y obtener de ella el `user_id`. Las consultas, las búsquedas y los conteos se limitan a ese propietario. Para editar o eliminar, identificar el producto por `id` y `user_id`.
+- Verificar la sesión de Supabase Auth y obtener de ella el `user_id`. Express consulta por propietario y devuelve el inventario paginado internamente. El navegador realiza la búsqueda y el conteo sobre ese inventario. Para editar o eliminar, Express filtra por `id` y `user_id`.
 - Volver a comprobar los campos obligatorios, recortar los textos y rechazar cantidades y mínimos vacíos, negativos o con decimales. En el registro, asignar el propietario desde la sesión. En la edición, aceptar únicamente cambios en nombre, SKU, cantidad y mínimo.
 - Mostrar un error de duplicado cuando la base de datos rechace un SKU de otro producto del mismo usuario. Conservar el SKU del producto que se está editando es válido.
 - Si el producto ya no existe o pertenece a otra persona, devolver el mismo mensaje de producto no disponible para editar o eliminar. Si falta una sesión válida o falla el guardado, devolver un mensaje claro para que el usuario pueda resolver el error.
@@ -69,3 +69,5 @@ El estado se calcula con `cantidad` y `minimo`. El indicador de existencias baja
 - Aplicar el índice único por usuario y SKU normalizado para impedir duplicados, incluso si llegan dos solicitudes al mismo tiempo.
 - Activar la seguridad por fila (RLS) en `productos`. Para usuarios autenticados, permitir leer y eliminar solo filas cuyo `user_id` coincida con `auth.uid()`. Exigir esa coincidencia al insertar y comprobarla tanto en la fila original como en la resultante al actualizar. Las sesiones anónimas quedan sin acceso.
 - Ejecutar las operaciones del inventario con el token del usuario autenticado para que RLS evalúe su identidad. [Documentación de RLS de Supabase](https://supabase.com/docs/guides/database/postgres/row-level-security)
+
+La prueba manual con dos cuentas comprobó el aislamiento desde la interfaz. Como Express también filtra por propietario, queda pendiente consultar la misma fila directamente en la Data API con ambas sesiones. Los intentos de edición y eliminación entre cuentas se probaron por simulación. [Resultados del Día 3](../entregas/dia-03/README.md#comprobación-de-aislamiento)
