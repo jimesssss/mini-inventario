@@ -1,0 +1,16 @@
+Rama: dia-04-supabase
+SKU A: 0; SKU B: 0 (prevalidación por MCP de solo lectura)
+Asistente loopback: HTTP 200; no-store; script HTTP 200
+npm test: 3/3; git diff --check: 0
+Matriz directa: pendiente de inicio de sesión del titular.
+
+Resultado final del asistente local:
+Dos sesiones distintas verificadas.
+Ambos SKU ausentes desde las dos sesiones.
+Producto A creado.
+Producto B creado.
+Cuenta A / producto A: 1
+Cuenta A / producto B: 0
+Cuenta B / producto A: 0
+Cuenta B / producto B: 1
+APROBADA
