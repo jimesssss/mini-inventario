@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mini Inventario</title>
+  <link rel="stylesheet" href="/css/estilos.css">
+  <script src="/js/supabase.js" defer></script>
+  <script src="/js/app.js" defer></script>
+</head>
+<body>
+  <main>
+    <h1>Mini Inventario</h1>
+    <p id="mensaje" role="status"></p>
+    <form id="inicio">
+      <h2>Iniciar sesión</h2>
+      <label for="correo">Correo electrónico</label>
+      <input id="correo" type="email" autocomplete="username" required>
+      <label for="contrasena">Contraseña</label>
+      <input id="contrasena" type="password" autocomplete="current-password" required>
+      <button id="entrar" type="submit" disabled>Iniciar sesión</button>
+    </form>
+    <section id="inventario" hidden>
+      <header>
+        <h2>Mis productos</h2>
+        <div class="acciones">
+          <button id="agregar" type="button">Agregar producto</button>
+          <button id="salir" type="button">Cerrar sesión</button>
+        </div>
+      </header>
+      <p id="total-existencias-bajas" role="status">Productos por debajo del mínimo: 0</p>
+      <label for="buscar-productos">Buscar por nombre o SKU</label>
+      <div class="busqueda">
+        <input id="buscar-productos" type="search" autocomplete="off">
+        <button id="limpiar-busqueda" type="button" disabled>Limpiar búsqueda</button>
+      </div>
+      <form id="formulario-producto" hidden novalidate>
+        <h3 id="titulo-producto">Agregar producto</h3>
+        <fieldset id="campos-producto">
+          <legend>Datos del producto</legend>
+          <label for="nombre">Nombre</label>
+          <input id="nombre" name="nombre" required aria-describedby="error-nombre">
+          <p class="error-campo" id="error-nombre" hidden></p>
+          <label for="sku">SKU</label>
+          <input id="sku" name="sku" type="text" required aria-describedby="error-sku">
+          <p class="error-campo" id="error-sku" hidden></p>
+          <label for="cantidad">Cantidad</label>
+          <input id="cantidad" name="cantidad" type="number" min="0" max="2147483647" step="1" required aria-describedby="error-cantidad">
+          <p class="error-campo" id="error-cantidad" hidden></p>
+          <label for="minimo">Mínimo</label>
+          <input id="minimo" name="minimo" type="number" min="0" max="2147483647" step="1" required aria-describedby="error-minimo">
+          <p class="error-campo" id="error-minimo" hidden></p>
+          <div class="acciones">
+            <button type="submit">Guardar</button>
+            <button id="cancelar-producto" type="button">Cancelar</button>
+          </div>
+        </fieldset>
+      </form>
+      <p id="vacio" hidden>Tu inventario todavía está vacío.</p>
+      <p id="sin-coincidencias" role="status" hidden>No se encontraron productos para esta búsqueda.</p>
+      <div id="resultados" hidden>
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Nombre</th>
+              <th scope="col">SKU</th>
+              <th scope="col">Cantidad</th>
+              <th scope="col">Mínimo</th>
+              <th scope="col">Estado</th>
+              <th scope="col">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="productos"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

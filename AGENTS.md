@@ -3,7 +3,7 @@
 2. Utilizar Node.js 22 y Python 3.12.
 3. El servidor web utilizará Express.
 4. La interfaz utilizará HTML, CSS y JavaScript sin frameworks.
-5. La base de datos seleccionada es Supabase y se incorporará a partir del Día 4, según la indicación del profesor. El mínimo de existencias será configurable por producto y el SKU será único por usuario, sin distinguir mayúsculas y minúsculas.
+5. Supabase PostgreSQL es la única base de datos del inventario desde el Día 3. El proyecto utilizará Supabase Auth y políticas de seguridad por fila (RLS). El mínimo de existencias será configurable por producto y el SKU será único por usuario, sin distinguir mayúsculas y minúsculas.
 6. Antes de programar, revisar README.md y docs/.
 7. Explicar el plan antes de modificar archivos.
 8. Crear una rama Git para cada actividad o cambio.

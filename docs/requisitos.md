@@ -1,6 +1,8 @@
 # Requisitos del proyecto Mini Inventario
 
-A partir del Día 4, Mini Inventario usará Supabase. La tabla `productos` tendrá los campos `id`, `user_id`, `nombre`, `sku`, `cantidad`, `minimo` y `created_at`. Cada usuario solo podrá consultar y modificar sus propios productos.
+Desde el Día 3, Mini Inventario usa Supabase PostgreSQL como única base de datos, con Supabase Auth y políticas de seguridad por fila (RLS). La tabla `productos` contiene los campos `id`, `user_id`, `nombre`, `sku`, `cantidad`, `minimo` y `created_at`. Cada usuario solo puede consultar y modificar sus propios productos.
+
+Los resultados de las pruebas reales, simuladas y pendientes se registran en la [bitácora del Día 3](../entregas/dia-03/README.md).
 
 ## HU-01 — Registrar productos
 
@@ -17,16 +19,16 @@ Como usuario, quiero consultar mis productos y sus existencias para saber cuále
 
 1. Al abrir o recargar el inventario, el usuario ve únicamente sus productos guardados, con nombre, SKU, cantidad, mínimo y estado.
 2. Si la cantidad es cero, el producto aparece como **Agotado**, incluido el caso en que el mínimo también es cero.
-3. Si la cantidad es mayor que cero y menor o igual al mínimo del producto, aparece como **Existencias bajas** y se muestra una advertencia.
-4. Si la cantidad es mayor que cero y mayor que el mínimo del producto, aparece como **Disponible**.
-5. El indicador cuenta todos los productos del usuario en estado **Existencias bajas**, incluso cuando la búsqueda oculta algunos resultados.
+3. Si la cantidad es mayor que cero y menor que el mínimo del producto, aparece como **Existencias bajas** y se muestra una advertencia.
+4. Si la cantidad es mayor que cero e igual o superior al mínimo del producto, aparece como **Disponible**.
+5. El indicador y el resaltado aplican `cantidad < minimo`. Un producto con cantidad cero y mínimo positivo se cuenta y conserva el estado **Agotado**. La búsqueda no cambia el total.
 
 ## HU-03 — Buscar productos
 
 Como usuario, quiero buscar mis productos por nombre o SKU para encontrar un registro rápidamente.
 
 1. Al escribir parte del nombre de un producto, se muestran las coincidencias de mi inventario sin distinguir mayúsculas y minúsculas.
-2. Al escribir un SKU completo, se encuentra la coincidencia exacta de mi inventario sin distinguir mayúsculas y minúsculas. Los SKU con un prefijo coincidente quedan fuera del resultado por SKU.
+2. Al escribir parte de un SKU o su valor completo, se muestran las coincidencias de mi inventario sin distinguir mayúsculas y minúsculas. El SKU se trata como texto para conservar sus ceros iniciales.
 3. Al vaciar el buscador, vuelven a mostrarse todos los productos de mi inventario.
 4. Si ningún producto de mi inventario coincide, el sistema muestra un mensaje indicando que no se encontraron productos.
 
