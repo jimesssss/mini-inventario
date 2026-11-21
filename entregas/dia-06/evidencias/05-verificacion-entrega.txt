@@ -1,0 +1,12 @@
+Día 6 · Actividad 5 · 20 de noviembre de 2026
+Rama dia-06-ci. PR #13 abierto hacia main. HEAD 8ed6d5670bf0055935d6223027f2b3736351e80e.
+gh pr view 13 y gh pr checks 13 — playwright pass, 32 s.
+gh run list y gh run view — run #1 44858792265 success, run #2 44859323419 failure y run #3 44860404527 success.
+gh secret list — SUPABASE_KEY, SUPABASE_URL, TEST_EMAIL y TEST_PASSWORD. Solo nombres.
+npm test — 3 de 3, 0 fallos. Suite local de Node con dobles de prueba.
+git diff — código de producción y suite iguales a main. Workflow, configuración de Playwright, reportero y suite iguales a la primera versión verde.
+git diff --check — código 0.
+Capturas — 8 revisadas visualmente. Los enlaces de las salidas de CLI, los números de las ejecuciones y sus estados corresponden a GitHub.
+Registros — 10, incluido este. La revisión de texto e imágenes se limitó a los archivos de la entrega. Las referencias a SKU e ID del registro local pertenecen a productos de prueba eliminados.
+ZIP — README.md, 8 PNG y 10 TXT. Se comprobó la extracción, el contenido y los enlaces relativos.
+Se reutilizaron los resultados reales de Playwright y la comprobación de limpieza de las corridas existentes. Durante la Actividad 5 no se lanzaron pruebas que escribieran en Supabase.

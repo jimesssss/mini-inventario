@@ -1,0 +1,20 @@
+# Día 6 — Primera ejecución real de GitHub Actions
+
+PR: https://github.com/jimesssss/mini-inventario/pull/13
+Commit: 985290a113de84b0411df9e58e249ca0bcf8f34c
+Workflow: Playwright CI
+Run: 44858792265
+Job: playwright (136707132739)
+Estado inicial: pendiente; run en ejecución.
+Estado final: completado, success; cuatro pruebas aprobadas.
+
+Comprobación final con gh pr checks, gh run list y el artefacto descargado:
+playwright	pass	29s	https://github.com/jimesssss/mini-inventario/actions/runs/44858792265/job/136707132739
+[{"conclusion":"success","databaseId":44858792265,"name":"Playwright CI","status":"completed","url":"https://github.com/jimesssss/mini-inventario/actions/runs/44858792265"}]
+{"estado":"passed","pruebas":[{"prueba":"inicio de sesión válido","estado":"passed","duracionMs":1694},{"prueba":"contraseña incorrecta rechazada","estado":"passed","duracionMs":451},{"prueba":"agregar producto ficticio","estado":"passed","duracionMs":826},{"prueba":"detectar existencias bajas","estado":"passed","duracionMs":742}]}
+{"databaseId":44858792265,"name":"Playwright CI","status":"completed","conclusion":"success","url":"https://github.com/jimesssss/mini-inventario/actions/runs/44858792265"}
+
+Verificación independiente del inventario mediante MCP en solo lectura:
+{"solo_lectura":"on","prueba_restantes":0,"otras_mismo_conteo":true,"otras_misma_huella":true}
+
+Aviso de GitHub Actions: checkout@v4, setup-node@v4 y upload-artifact@v4 apuntan a Node.js 20 y el runner las ejecutó con Node.js 24. El job aprobó; Node.js 22 sigue configurado para las pruebas. No se cambió el workflow tras observar el aviso.

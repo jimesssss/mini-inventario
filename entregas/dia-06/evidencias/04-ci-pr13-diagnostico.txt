@@ -1,0 +1,31 @@
+# Día 6 — Actividad 4 · diagnóstico del estado rojo
+
+Rama: dia-06-ci. PR #13 abierto hacia main.
+Commit verde: 985290a113de84b0411df9e58e249ca0bcf8f34c.
+Commit rojo: db4bd7a857c5e909060a90512fe24bdc72c5d2e9.
+
+Comandos consultados:
+- gh pr view 13 --repo jimesssss/mini-inventario
+- gh pr checks 13 --repo jimesssss/mini-inventario
+- gh run list --repo jimesssss/mini-inventario --branch dia-06-ci --event pull_request
+- gh run view 44859323419 --repo jimesssss/mini-inventario --log-failed
+- gh run view 44859323419 --repo jimesssss/mini-inventario --json jobs
+- gh run download 44858792265 --repo jimesssss/mini-inventario --name playwright-report
+- gh run download 44859323419 --repo jimesssss/mini-inventario --name playwright-report
+- git diff --no-ext-diff --unified=3 985290a db4bd7a -- tests/inventario.spec.js
+
+GitHub CLI devolvió playwright: fail, 35 s, job 136708793336.
+El paso «Ejecutar Playwright Test» falló. Instalación de dependencias, Chromium y carga de artefacto aprobaron.
+Extracto seguro del log fallido:
+Playwright: failed (4 pruebas registradas).
+Process completed with exit code 1.
+
+Comparación de los reportes de GitHub Actions:
+{"Run":"44858792265","Estado":"passed","Pruebas":[{"prueba":"inicio de sesión válido","estado":"passed"},{"prueba":"contraseña incorrecta rechazada","estado":"passed"},{"prueba":"agregar producto ficticio","estado":"passed"},{"prueba":"detectar existencias bajas","estado":"passed"}]}
+{"Run":"44859323419","Estado":"failed","Pruebas":[{"prueba":"inicio de sesión válido","estado":"passed"},{"prueba":"contraseña incorrecta rechazada","estado":"failed"},{"prueba":"agregar producto ficticio","estado":"passed"},{"prueba":"detectar existencias bajas","estado":"passed"}]}
+
+La suite roja cambió únicamente tests/inventario.spec.js:147, de toBeHidden() a toBeVisible() para «Mis productos», después de comprobar el mensaje de rechazo. El log sanitizado no incluye la traza de la aserción. La prueba fallida se identificó por el artefacto; archivo, línea y comportamiento por el diff y la comprobación aislada.
+
+Reproduccion local con Auth simulada: rechazo visible, inventario oculto; toBeHidden pasa y toBeVisible falla. Cero escrituras y cero llamadas a Supabase.
+
+Solución propuesta: restaurar la aserción original toBeHidden(). Sin aplicar. El PR permanece abierto y rojo.
