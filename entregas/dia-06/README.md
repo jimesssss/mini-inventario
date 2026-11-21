@@ -216,3 +216,23 @@ El ciclo verde → rojo → verde quedó completado. El [PR #13](https://github.
 - [Actividad 1 — Preparación y pruebas locales](capturas/chat/01-preparacion-y-pruebas-locales.png). Muestra la bitácora inicial y el resumen de los cuatro casos aprobados en local.
 - [Actividad 2 — Procedimiento para configurar los secretos](capturas/chat/02-procedimiento-secretos-github.png). Muestra las instrucciones de GitHub CLI para registrar y verificar los nombres de los secretos.
 - [Actividad 4 — Registro del fallo controlado](capturas/chat/03-registro-del-fallo-controlado.png). Muestra el resumen del estado rojo y las evidencias guardadas antes del diagnóstico.
+
+## Archivo complementario de capturas del chat
+
+Este archivo reúne capturas históricas del proceso, incluidas actividades de los Días 4 y 5. Su función es complementar la bitácora. Algunas escenas repiten material ya publicado, incluidas las tres capturas de proceso de `capturas/chat/`. El conjunto oficial del Día 6 se conserva en `capturas/`, `evidencias/` y el [ZIP original](evidencias-dia-06.zip).
+
+Las copias mantienen los nombres originales. Las zonas privadas se cubrieron con rectángulos opacos antes de exportar. Los 13 PNG se volvieron a codificar sin metadatos auxiliares.
+
+- [image(20261120-234125).png](capturas-chat-dia-06/image%2820261120-234125%29.png) — Día 4 · prueba de aislamiento y preparación del PR #10.
+- [image(20261120-234458).png](capturas-chat-dia-06/image%2820261120-234458%29.png) — Día 4 · resumen de la publicación inicial del PR #10.
+- [image(20261121-002005).png](capturas-chat-dia-06/image%2820261121-002005%29.png) — Día 4 · sincronización de main antes del Día 5.
+- [image(20261121-002155).png](capturas-chat-dia-06/image%2820261121-002155%29.png) — Día 4 · verificación de aislamiento y limpieza.
+- [image(20261121-011536).png](capturas-chat-dia-06/image%2820261121-011536%29.png) — Día 5 · preparación de Playwright CLI.
+- [image(20261121-011905).png](capturas-chat-dia-06/image%2820261121-011905%29.png) — Día 5 · instrucciones de inicio de sesión.
+- [image(20261121-012458).png](capturas-chat-dia-06/image%2820261121-012458%29.png) — Día 5 · plan de exploración del formulario y la vista móvil.
+- [image(20261121-013429).png](capturas-chat-dia-06/image%2820261121-013429%29.png) — Día 5 · instrucciones para la prueba de regresión.
+- [image(20261121-021342).png](capturas-chat-dia-06/image%2820261121-021342%29.png) — Día 6 · preparación y cuatro pruebas locales aprobadas.
+- [image(20261121-022008).png](capturas-chat-dia-06/image%2820261121-022008%29.png) — Día 6 · procedimiento para configurar los secretos de GitHub.
+- [image(20261121-022234).png](capturas-chat-dia-06/image%2820261121-022234%29.png) — Día 6 · terminal durante el registro de los secretos.
+- [image(20261121-022313).png](capturas-chat-dia-06/image%2820261121-022313%29.png) — Día 6 · verificación de los cuatro nombres con GitHub CLI.
+- [image(20261121-030931).png](capturas-chat-dia-06/image%2820261121-030931%29.png) — Día 6 · resumen del fallo controlado antes del diagnóstico.
