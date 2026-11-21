@@ -1,0 +1,60 @@
+# Actividad 4 — Playwright Test
+
+Comando: npx playwright test
+Resultado: salida 0, Playwright Test 1.65.1, Chrome, un trabajador.
+
+Running 4 tests using 1 worker
+
+(node:14220) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 tests\inventario.spec.js:137:1 › inicio de sesión válido (2.3s)
+  ok 2 tests\inventario.spec.js:141:1 › contraseña incorrecta rechazada (757ms)
+[alta prevista] SKU PRUEBA-D05-E2E-7E3AABD2-71DB-4859-9114-467B77416526
+[creado] SKU PRUEBA-D05-E2E-7E3AABD2-71DB-4859-9114-467B77416526 | ID cdd8b0e7-3d5d-41c5-8370-5b558e41d49b
+[limpieza verificada] SKU PRUEBA-D05-E2E-7E3AABD2-71DB-4859-9114-467B77416526 | ID cdd8b0e7-3d5d-41c5-8370-5b558e41d49b | filas restantes: 0
+  ok 3 tests\inventario.spec.js:151:1 › agregar producto ficticio (1.9s)
+[alta prevista] SKU PRUEBA-D05-E2E-C5C4071D-1E7F-4917-BD68-F09729B67002
+[creado] SKU PRUEBA-D05-E2E-C5C4071D-1E7F-4917-BD68-F09729B67002 | ID b4bcb29d-fb67-47d0-92ad-14d13ba5418e
+[limpieza verificada] SKU PRUEBA-D05-E2E-C5C4071D-1E7F-4917-BD68-F09729B67002 | ID b4bcb29d-fb67-47d0-92ad-14d13ba5418e | filas restantes: 0
+  ok 4 tests\inventario.spec.js:156:1 › detectar existencias bajas (1.8s)
+
+  4 passed (9.8s)
+
+Comando: npm test
+Resultado: salida 0.
+> mini-inventario@1.0.0 test
+> node --test
+
+TAP version 13
+# Subtest: interfaz simulada: sesión, búsqueda, contador, alta, edición y eliminación
+ok 1 - interfaz simulada: sesión, búsqueda, contador, alta, edición y eliminación
+  ---
+  duration_ms: 41.0643
+  type: 'test'
+  ...
+# Subtest: rutas de productos con Auth y Data API simuladas
+ok 2 - rutas de productos con Auth y Data API simuladas
+  ---
+  duration_ms: 231.0632
+  type: 'test'
+  ...
+# Subtest: la configuración acepta la URL base y rechaza rutas de otras API
+ok 3 - la configuración acepta la URL base y rechaza rutas de otras API
+  ---
+  duration_ms: 1.2415
+  type: 'test'
+  ...
+1..3
+# tests 3
+# suites 0
+# pass 3
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 701.0737
+
+Comprobación independiente mediante MCP en solo lectura:
+{"read_only":"on","alta_restantes":0,"bajas_restantes":0,"actividad_2_intacto":1}
+
+git diff --check: salida 0.
