@@ -1,0 +1,24 @@
+# Día 5 — Limpieza final del producto sintético
+
+Rama: dia-05-desarrollo
+SKU autorizado: PRUEBA-D05-MWPQ6WSZ-62C53A
+ID autorizado: 3c9f5b1d-bfb9-4ee6-b0b9-872318e99765
+Cantidad: 3
+Mínimo: 10
+
+Consulta previa por MCP en solo lectura: un candidato y coincidencia exacta, cero residuos automatizados.
+Lectura autenticada: una fila. Coinciden ID, SKU, nombre, cantidad, minimo y propietario.
+DELETE PostgREST: HTTP 200; una fila; ID coincide con el producto autorizado.
+La solicitud filtró por ID, SKU exacto, propietario autenticado, nombre, cantidad y mínimo. Se conservó únicamente el resultado técnico.
+
+Verificación independiente posterior por MCP en solo lectura:
+{
+  "solo_lectura": "on",
+  "candidatos": 0,
+  "automatizados": 0,
+  "prueba_dia5": 0,
+  "mismo_conteo_otros": true,
+  "misma_huella_otros": true
+}
+
+El conteo y la huella agregada de las demás filas coincidieron antes y después. No se archivaron valores de las filas, huellas, identificadores del propietario ni credenciales.

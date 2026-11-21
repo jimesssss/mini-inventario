@@ -1,0 +1,47 @@
+Comando: npx playwright test
+Comparación temporal: return cantidad === minimo;
+Código de salida: 1
+
+
+Running 4 tests using 1 worker
+
+  ok 1 tests\inventario.spec.js:137:1 › inicio de sesión válido (1.7s)
+  ok 2 tests\inventario.spec.js:141:1 › contraseña incorrecta rechazada (1.3s)
+[alta prevista] SKU PRUEBA-D05-E2E-B767FA61-C2E0-46B8-AEA0-920F96E01504
+[creado] SKU PRUEBA-D05-E2E-B767FA61-C2E0-46B8-AEA0-920F96E01504 | ID ef60bc4a-9910-4c53-892d-2524f4b63c8f
+[limpieza verificada] SKU PRUEBA-D05-E2E-B767FA61-C2E0-46B8-AEA0-920F96E01504 | ID ef60bc4a-9910-4c53-892d-2524f4b63c8f | filas restantes: 0
+  ok 3 tests\inventario.spec.js:151:1 › agregar producto ficticio (2.0s)
+[alta prevista] SKU PRUEBA-D05-E2E-736200CB-A982-484A-9512-092A136BFDB7
+[creado] SKU PRUEBA-D05-E2E-736200CB-A982-484A-9512-092A136BFDB7 | ID 91d8e427-c1f9-4d02-bc34-f4d0c9253c5f
+[limpieza verificada] SKU PRUEBA-D05-E2E-736200CB-A982-484A-9512-092A136BFDB7 | ID 91d8e427-c1f9-4d02-bc34-f4d0c9253c5f | filas restantes: 0
+  x  4 tests\inventario.spec.js:156:1 › detectar existencias bajas (6.8s)
+
+
+  1) tests\inventario.spec.js:156:1 › detectar existencias bajas ───────────────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('#productos tr').filter({ has: getByRole('cell', { name: 'PRUEBA-D05-E2E-736200CB-A982-484A-9512-092A136BFDB7', exact: true }) }).getByRole('cell', { name: 'Existencias bajas', exact: true })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('#productos tr').filter({ has: getByRole('cell', { name: 'PRUEBA-D05-E2E-736200CB-A982-484A-9512-092A136BFDB7', exact: true }) }).getByRole('cell', { name: 'Existencias bajas', exact: true }) with timeout 5000ms
+      - waiting for locator('#productos tr').filter({ has: getByRole('cell', { name: 'PRUEBA-D05-E2E-736200CB-A982-484A-9512-092A136BFDB7', exact: true }) }).getByRole('cell', { name: 'Existencias bajas', exact: true })
+
+
+      156 | test('detectar existencias bajas', async ({ productoTemporal }) => {
+      157 |   const fila = await productoTemporal({ nombre: 'Existencias bajas automatizadas Día 5', cantidad: 3, minimo: 10 });
+    > 158 |   await expect(fila.getByRole('cell', { name: 'Existencias bajas', exact: true })).toBeVisible();
+          |                                                                                    ^
+      159 |   await expect(fila).toHaveAttribute('data-bajo-minimo', '');
+      160 | });
+      161 |
+        at <repositorio>\tests\inventario.spec.js:158:84
+
+    Error Context: ..\..\AppData\Local\Temp\mini-inventario-playwright-33532\inventario-detectar-existencias-bajas\error-context.md
+
+  1 failed
+    tests\inventario.spec.js:156:1 › detectar existencias bajas ────────────────────────────────────
+  3 passed (15.0s)

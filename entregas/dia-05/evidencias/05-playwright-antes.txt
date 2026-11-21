@@ -1,0 +1,19 @@
+Comando: npx playwright test
+Comparación original: return cantidad < minimo; | SHA-256 app.js: 7BD908D4458ED6654656E4943B05FEEE6B4D47C4919DC235A214827820DE3D82
+Código de salida: 0
+
+
+Running 4 tests using 1 worker
+
+  ok 1 tests\inventario.spec.js:137:1 › inicio de sesión válido (1.8s)
+  ok 2 tests\inventario.spec.js:141:1 › contraseña incorrecta rechazada (1.3s)
+[alta prevista] SKU PRUEBA-D05-E2E-F207B6C2-CE57-4EB7-9C92-4AB1803DAC24
+[creado] SKU PRUEBA-D05-E2E-F207B6C2-CE57-4EB7-9C92-4AB1803DAC24 | ID 80287908-6087-4050-9162-239d7e7168e1
+[limpieza verificada] SKU PRUEBA-D05-E2E-F207B6C2-CE57-4EB7-9C92-4AB1803DAC24 | ID 80287908-6087-4050-9162-239d7e7168e1 | filas restantes: 0
+  ok 3 tests\inventario.spec.js:151:1 › agregar producto ficticio (3.3s)
+[alta prevista] SKU PRUEBA-D05-E2E-FB054BAD-49AD-419B-9934-6781D5C2964A
+[creado] SKU PRUEBA-D05-E2E-FB054BAD-49AD-419B-9934-6781D5C2964A | ID 856d9176-fcb3-451f-a261-07a8521bf25e
+[limpieza verificada] SKU PRUEBA-D05-E2E-FB054BAD-49AD-419B-9934-6781D5C2964A | ID 856d9176-fcb3-451f-a261-07a8521bf25e | filas restantes: 0
+  ok 4 tests\inventario.spec.js:156:1 › detectar existencias bajas (2.9s)
+
+  4 passed (12.7s)

@@ -75,14 +75,16 @@ function renderizarListado() {
   resultados.hidden = visibles.length === 0;
 }
 
+function mostrarErrorCampo(campo, error = '') {
+  const input = formulario.elements.namedItem(campo);
+  const aviso = document.getElementById(`error-${campo}`);
+  aviso.textContent = error;
+  aviso.hidden = !error;
+  input.setAttribute('aria-invalid', String(!aviso.hidden));
+}
+
 function mostrarErrores(camposInvalidos = {}) {
-  for (const campo of campos) {
-    const input = formulario.elements.namedItem(campo);
-    const aviso = document.getElementById(`error-${campo}`);
-    aviso.textContent = camposInvalidos[campo] ?? '';
-    aviso.hidden = !aviso.textContent;
-    input.setAttribute('aria-invalid', String(!aviso.hidden));
-  }
+  for (const campo of campos) mostrarErrorCampo(campo, camposInvalidos[campo]);
   const primero = campos.find((campo) => camposInvalidos[campo]);
   if (primero) formulario.elements.namedItem(primero).focus();
 }
@@ -191,6 +193,18 @@ async function iniciar() {
   cancelarProducto.addEventListener('click', () => {
     cerrarFormulario();
     agregar.focus();
+  });
+
+  formulario.addEventListener('input', (evento) => {
+    const campo = evento.target.name;
+    if (!campos.includes(campo) || document.getElementById(`error-${campo}`).hidden) return;
+
+    const { errores } = leerFormulario();
+    mostrarErrorCampo(campo, errores[campo]);
+    if (mensaje.textContent === 'Revisa los campos indicados.' &&
+        campos.every((nombre) => document.getElementById(`error-${nombre}`).hidden)) {
+      mensaje.textContent = '';
+    }
   });
 
   formulario.addEventListener('submit', async (evento) => {
