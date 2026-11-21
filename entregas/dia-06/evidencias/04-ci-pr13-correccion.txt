@@ -1,0 +1,14 @@
+Corrección del PR #13
+Rama dia-06-ci y destino main. PR abierto antes de publicar.
+Commit rojo db4bd7a857c5e909060a90512fe24bdc72c5d2e9
+Commit de corrección 8ed6d5670bf0055935d6223027f2b3736351e80e
+tests/inventario.spec.js:147 — toBeVisible() → toBeHidden().
+git hash-object confirmó igualdad exacta con el archivo del commit verde 985290a113de84b0411df9e58e249ca0bcf8f34c.
+node --check tests/inventario.spec.js — aprobado.
+Chrome con Auth simulada y red externa bloqueada — mensaje de rechazo visible, inventario oculto y reintento disponible. Cero llamadas a Supabase o escrituras.
+npm test — 3 aprobadas, 0 fallos.
+git diff --check y git diff --cached --check — aprobados.
+git add -- tests/inventario.spec.js
+git commit -m "test: restaurar validación de acceso rechazado - Día 6"
+git push origin refs/heads/dia-06-ci:refs/heads/dia-06-ci
+El commit contiene únicamente tests/inventario.spec.js, una línea sustituida.

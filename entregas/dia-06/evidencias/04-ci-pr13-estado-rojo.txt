@@ -1,0 +1,16 @@
+# Día 6 — Actividad 4 · estado rojo del PR #13
+
+PR: https://github.com/jimesssss/mini-inventario/pull/13
+Primera corrida aprobada de referencia: https://github.com/jimesssss/mini-inventario/actions/runs/44858792265
+Commit controlado: db4bd7a857c5e909060a90512fe24bdc72c5d2e9
+Run fallido: https://github.com/jimesssss/mini-inventario/actions/runs/44859323419
+Job: playwright (136708793336)
+
+Antes de la publicación: node --check y git diff --cached --check terminaron con código 0. El commit cambia un solo archivo de prueba y una sola línea. Se guardó una copia exacta del archivo previo y su blob está disponible en el commit verde.
+
+Salida de verificación de estado por GitHub CLI:
+playwright	fail	35s	https://github.com/jimesssss/mini-inventario/actions/runs/44859323419/job/136708793336
+checks_exit=1
+{"conclusion":"failure","databaseId":44859323419,"headSha":"db4bd7a857c5e909060a90512fe24bdc72c5d2e9","jobs":[{"conclusion":"failure","databaseId":136708793336,"name":"playwright","url":"https://github.com/jimesssss/mini-inventario/actions/runs/44859323419/job/136708793336"}],"name":"Playwright CI","status":"completed","url":"https://github.com/jimesssss/mini-inventario/actions/runs/44859323419"}
+
+gh run watch --exit-status concluyó con código 1. No se consultaron logs de prueba ni se investigó el motivo del fallo. La corrección y la nueva ejecución quedan pendientes.

@@ -1,0 +1,37 @@
+Verificación verde final del PR #13
+https://github.com/jimesssss/mini-inventario/pull/13
+https://github.com/jimesssss/mini-inventario/actions/runs/44860404527
+Run 44860404527 — completed / success, 36 s totales.
+Job playwright 136712223645 — pass, 32 s.
+gh run list --branch dia-06-ci --commit 8ed6d5670bf0055935d6223027f2b3736351e80e --event pull_request
+gh run watch 44860404527 --compact --interval 5 --exit-status
+gh pr view 13 — OPEN, dia-06-ci hacia main y mismo commit.
+gh pr checks 13 — playwright pass.
+gh run view 44860404527 — confirmó el resultado, el commit y el job.
+gh run download 44860404527 --name playwright-report — un archivo JSON validado.
+{
+  "estado": "passed",
+  "pruebas": [
+    {
+      "prueba": "inicio de sesión válido",
+      "estado": "passed",
+      "duracionMs": 1433
+    },
+    {
+      "prueba": "contraseña incorrecta rechazada",
+      "estado": "passed",
+      "duracionMs": 485
+    },
+    {
+      "prueba": "agregar producto ficticio",
+      "estado": "passed",
+      "duracionMs": 821
+    },
+    {
+      "prueba": "detectar existencias bajas",
+      "estado": "passed",
+      "duracionMs": 787
+    }
+  ]
+}
+MCP Supabase antes y después — transacción de solo lectura; cero SKU PRUEBA-D05-% al cierre. Conteo y huella agregada de las otras filas idénticos. El registro omite valores y filas de productos.

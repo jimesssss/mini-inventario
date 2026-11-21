@@ -1,0 +1,55 @@
+name: Playwright CI
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+# Supabase Auth usa la misma cuenta de prueba en todas las corridas.
+concurrency:
+  group: mini-inventario-playwright-supabase
+  cancel-in-progress: false
+
+jobs:
+  playwright:
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' && github.event.pull_request.user.login != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Obtener el código del PR
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Configurar Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Instalar Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Ejecutar Playwright Test
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_KEY }}
+          TEST_EMAIL: ${{ secrets.TEST_EMAIL }}
+          TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+          PLAYWRIGHT_SAFE_REPORT: ${{ runner.temp }}/playwright-report.json
+        run: npx playwright test --reporter=./playwright-ci-reporter.cjs
+
+      - name: Subir reporte de Playwright
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: ${{ runner.temp }}/playwright-report.json
+          if-no-files-found: ignore
+          retention-days: 14
