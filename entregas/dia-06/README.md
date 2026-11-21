@@ -63,7 +63,7 @@ gh secret set TEST_EMAIL
 gh secret set TEST_PASSWORD
 ```
 
-El titular realizó el alta manual. Se verificó después la lista con `gh secret list --repo jimesssss/mini-inventario --json name --jq '.[].name'`. GitHub devolvió exactamente los cuatro nombres de la tabla. La comprobación acredita su registro. La validación en ejecución corresponde al futuro workflow.
+El titular realizó el alta manual. Se verificó después la lista con `gh secret list --repo jimesssss/mini-inventario --json name --jq '.[].name'`. GitHub devolvió exactamente los cuatro nombres de la tabla. La comprobación acredita su registro. El uso de los secretos se comprobó después en las ejecuciones del workflow.
 
 - [Verificación previa](evidencias/02-secretos-github-preverificacion.txt)
 - [Registro técnico posterior al alta](evidencias/02-secretos-github-verificados.txt)
@@ -79,7 +79,7 @@ La suite conserva los cuatro casos y su limpieza existente. Cada alta usa un SKU
 
 `playwright-ci-reporter.cjs` genera `playwright-report.json` con el estado global y el nombre, estado y duración de cada caso. El artefacto `playwright-report` se sube también cuando las pruebas fallan y se conserva 14 días. El reporte excluye mensajes crudos de error, salida de las pruebas, adjuntos y datos de sesión. Las trazas, los videos y las capturas automáticas siguen desactivados. Si el entorno falla antes de ejecutar Playwright, no se genera un reporte de pruebas.
 
-Validación local: `actionlint` 1.7.12 aprobó el YAML, `npx playwright test --list` reconoció los cuatro casos y `npm test` aprobó 3 de 3. Una ejecución aislada del reportero con un caso aprobado y otro fallido produjo el JSON esperado y excluyó un marcador ficticio de errores, consola y adjuntos. `git diff --check` pasó. La prueba real en `ubuntu-latest` queda pendiente de publicar y abrir el PR. Se guardó una salida técnica. Todavía no existe una ejecución de GitHub Actions para capturar.
+Validación local: `actionlint` 1.7.12 aprobó el YAML, `npx playwright test --list` reconoció los cuatro casos y `npm test` aprobó 3 de 3. Una ejecución aislada del reportero con un caso aprobado y otro fallido produjo el JSON esperado y excluyó un marcador ficticio de errores, consola y adjuntos. `git diff --check` pasó. La validación en el runner `ubuntu-latest` se realizó después de publicar el workflow y se documenta en el apartado siguiente.
 
 [Evidencia técnica de la Actividad 3](evidencias/03-validacion-workflow.txt)
 
@@ -90,21 +90,21 @@ El [PR #13](https://github.com/jimesssss/mini-inventario/pull/13) se abrió con 
 La consulta posterior por MCP en solo lectura devolvió cero SKU de prueba. El conteo y la huella agregada de los demás productos coincidieron con la referencia anterior. GitHub avisó que las acciones `@v4` se ejecutaron con Node.js 24 por la retirada de Node.js 20. El paso de pruebas conservó su configuración de Node.js 22 y la corrida aprobó. El workflow quedó sin cambios tras la verificación.
 
 - [Registro de la primera ejecución](evidencias/03-ci-pr13-primera-ejecucion.txt)
-- [Captura de la consulta actual de GitHub CLI](capturas/03-ci-pr13-aprobada.png)
+- [Captura de la primera verificación en GitHub CLI](capturas/03-ci-pr13-aprobada.png)
 
-Estas nuevas evidencias quedaron en la copia local, fuera del primer commit. El PR sigue abierto y el fallo provocado queda pendiente.
+Las evidencias de esta primera corrida se incorporaron al PR con la entrega final. El fallo controlado se ejecutó después sobre el mismo PR.
 
 ## Actividad 4. Estado rojo del mismo Pull Request
 
 Se confirmó la primera corrida verde y se conservó la versión exacta de la prueba original antes de preparar el commit `db4bd7a857c5e909060a90512fe24bdc72c5d2e9`. El commit cambia una sola línea de `tests/inventario.spec.js`. Pasaron `node --check` y `git diff --cached --check`. Se publicó en `dia-06-ci` y activó GitHub Actions en el mismo [PR #13](https://github.com/jimesssss/mini-inventario/pull/13).
 
-El [run 44859323419](https://github.com/jimesssss/mini-inventario/actions/runs/44859323419) terminó en `failure`. La verificación `playwright` aparece como `fail` y duró 35 s. Se consultaron solo el estado y los identificadores. La investigación del fallo y la restauración quedan para la siguiente etapa.
+El [run 44859323419](https://github.com/jimesssss/mini-inventario/actions/runs/44859323419) terminó en `failure`. La verificación `playwright` aparece como `fail` y duró 35 s. Se consultaron solo el estado y los identificadores. El diagnóstico y la restauración se documentan más abajo.
 
 - [Registro técnico del estado rojo](evidencias/04-ci-pr13-estado-rojo.txt)
 - [Captura del estado del PR consultado con GitHub CLI](capturas/04-pr13-verificacion-roja.png)
 - [Captura del resumen del run fallido en GitHub Actions](capturas/05-actions-run-rojo.png)
 
-Las evidencias añadidas tras la corrida se conservan en local. El PR sigue abierto y el commit controlado permanece publicado.
+Las evidencias del estado rojo se incorporaron a la entrega final. El commit controlado se conserva en el historial del PR.
 
 ### Diagnóstico del fallo
 
@@ -119,7 +119,7 @@ Las evidencias añadidas tras la corrida se conservan en local. El PR sigue abie
 
 Los artefactos descargados con `gh run download` identificaron el único caso fallido. El diff entre ambos commits mostró una sola línea distinta, `tests/inventario.spec.js:147`. El caso comprueba primero el mensaje de rechazo. La aserción modificada espera después que **Mis productos** sea visible, aunque el comportamiento correcto es mantener el inventario oculto tras rechazar el acceso.
 
-Se comprobó la misma salida visual en Chrome con Auth simulada y las conexiones a Supabase bloqueadas. El mensaje de rechazo apareció, el encabezado quedó oculto y `toBeVisible()` falló. `toBeHidden()` pasó. La solución mínima es restaurar `toBeHidden()` en esa línea. La corrección espera autorización. [Registro técnico del diagnóstico](evidencias/04-ci-pr13-diagnostico.txt)
+Se comprobó la misma salida visual en Chrome con Auth simulada y las conexiones a Supabase bloqueadas. El mensaje de rechazo apareció, el encabezado quedó oculto y `toBeVisible()` falló. `toBeHidden()` pasó. La solución propuesta fue restaurar `toBeHidden()` en esa línea. Se aplicó después de recibir autorización. [Registro técnico del diagnóstico](evidencias/04-ci-pr13-diagnostico.txt)
 
 ### Restauración y estado verde final
 
@@ -127,7 +127,7 @@ El primer verde, el fallo controlado y su diagnóstico se conservaron en los reg
 
 La comprobación local con Auth simulada y la red externa bloqueada confirmó el mensaje de rechazo, el inventario oculto y el botón de reintento habilitado. Pasaron `node --check`, `npm test` (3 de 3), `git diff --check` y `git diff --cached --check`. El commit `8ed6d5670bf0055935d6223027f2b3736351e80e` publicó únicamente el archivo de prueba en `dia-06-ci`.
 
-`gh run watch` y `gh run view` confirmaron que el [run 44860404527](https://github.com/jimesssss/mini-inventario/actions/runs/44860404527) concluyó con éxito en 36 s. `gh pr checks 13` devolvió `playwright pass` en 32 s y `gh pr view` confirmó que el PR sigue abierto hacia `main`. Con `gh run download` se revisó el JSON del artefacto. Los cuatro casos constan como `passed`: inicio de sesión válido, contraseña incorrecta rechazada, alta de producto ficticio y detección de existencias bajas.
+`gh run watch` y `gh run view` confirmaron que el [run 44860404527](https://github.com/jimesssss/mini-inventario/actions/runs/44860404527) concluyó con éxito en 36 s. `gh pr checks 13` devolvió `playwright pass` en 32 s y `gh pr view` confirmó que el PR seguía abierto hacia `main` en el momento de la verificación. Con `gh run download` se revisó el JSON del artefacto. Los cuatro casos constan como `passed`: inicio de sesión válido, contraseña incorrecta rechazada, alta de producto ficticio y detección de existencias bajas.
 
 La consulta por MCP en solo lectura confirmó cero SKU de prueba del patrón `PRUEBA-D05-%`. El conteo y la huella agregada de los demás productos coincidieron antes y después de la corrida. Se registró únicamente el resultado de la comparación.
 
@@ -137,7 +137,7 @@ La consulta por MCP en solo lectura confirmó cero SKU de prueba del patrón `PR
 - [Captura del resumen oficial del run aprobado](capturas/07-actions-run-verde-final.png)
 - [Captura de los cuatro casos aprobados en el JSON descargado](capturas/08-playwright-cuatro-aprobadas.png)
 
-La bitácora y las nuevas evidencias quedaron en la copia local. El PR sigue abierto.
+La bitácora y estas evidencias se publicaron posteriormente con la entrega final.
 
 ## Actividad 5. Verificación de la entrega
 
@@ -155,11 +155,45 @@ La prueba de contraseña incorrecta tenía una condición equivocada. Esperaba q
 
 ### Prompts clave utilizados con Codex
 
-1. Preparar la rama del Día 6, revisar la limpieza de los productos sintéticos y ejecutar las cuatro pruebas locales con la cuenta autorizada.
-2. Preparar los comandos de alta de secretos para que los ejecute el titular y verificar solo los nombres registrados.
-3. Crear un workflow con Node.js 22 y Chromium que ejecute Playwright en PR hacia `main` y conserve un reporte seguro.
-4. Inducir un fallo de aserción reversible, diagnosticarlo con GitHub CLI y restaurar la prueba tras recibir autorización.
-5. Contrastar las evidencias con GitHub, revisar privacidad y preparar la entrega sin crear un commit.
+Los siguientes extractos textuales provienen de los mensajes originales de la conversación con Codex. Se seleccionaron las instrucciones que explican cada etapa del ciclo.
+
+**1. Creación del workflow**
+
+> Crear un workflow funcional que ejecute automáticamente las pruebas de Playwright en cada Pull Request hacia main y permita descargar el reporte de resultados.
+
+**Resultado.** Se creó `.github/workflows/ci.yml` con Node.js 22, Chromium y un artefacto JSON. La primera ejecución del PR aprobó los cuatro casos. [Ejecución 44858792265](https://github.com/jimesssss/mini-inventario/actions/runs/44858792265)
+
+**2. Fallo controlado**
+
+> La modificación debe provocar un fallo de aserción real en GitHub Actions sin modificar la lógica de producción, la base de datos, las políticas RLS ni las credenciales.
+
+**Resultado.** El cambio de una sola aserción hizo fallar la prueba de contraseña incorrecta. Las otras tres aprobaron. [Ejecución 44859323419](https://github.com/jimesssss/mini-inventario/actions/runs/44859323419)
+
+**3. Diagnóstico mediante GitHub CLI**
+
+> Necesito que investigues la causa utilizando GitHub CLI, sin modificar todavía ningún archivo.
+
+> Determina la causa raíz utilizando los registros reales, sin asumir que el problema está en Supabase, GitHub Actions o Playwright.
+
+**Resultado.** El prompt de diagnóstico proporcionó el identificador del run, sin adelantar la causa. El log ubicó el paso fallido, el artefacto identificó el caso y el diff reveló que la condición esperaba que el inventario apareciera tras rechazar el acceso. [Registro del diagnóstico](evidencias/04-ci-pr13-diagnostico.txt)
+
+**4. Autorización de la corrección**
+
+> Sí, autorizo corregir el fallo diagnosticado del Pull Request #13 de Mini Inventario.
+
+> Sustituye toBeVisible() por toBeHidden().
+
+**Resultado.** Se restauró la línea 147 y se confirmó que el archivo de pruebas completo coincidía con el del primer verde. [Registro de la corrección](evidencias/04-ci-pr13-correccion.txt)
+
+**5. Verificación del verde final**
+
+> Espera a que finalice la ejecución del workflow y comprueba que las cuatro pruebas de Playwright aparezcan como aprobadas.
+
+> Descarga y revisa el artefacto JSON de Playwright, comprobando que los cuatro casos aparezcan como passed.
+
+**Resultado.** Estas instrucciones formaban parte del mismo mensaje que autorizó la corrección. El PR volvió a verde y los cuatro casos figuraron como `passed` en el JSON descargado. [Ejecución 44860404527](https://github.com/jimesssss/mini-inventario/actions/runs/44860404527)
+
+**Resumen de otros encargos.** La preparación local, la verificación de los nombres de secretos y la revisión de la entrega se describen en sus actividades respectivas.
 
 ### Error real de la IA y comando aprobado
 
@@ -169,8 +203,10 @@ El titular aprobó publicar la corrección con `git push origin refs/heads/dia-0
 
 ### Índice y cierre
 
-Los enlaces de las Actividades 1 a 4 forman el índice de las 8 capturas y 9 registros técnicos de esas etapas. Las imágenes de las verificaciones del PR y de los nombres de secretos recogen salidas reales de GitHub CLI. Las imágenes de las ejecuciones roja y verde final muestran los resúmenes oficiales de GitHub Actions. La captura de los cuatro casos muestra el JSON descargado del último run.
+Los enlaces de las Actividades 1 a 4 forman el índice de las ocho capturas y nueve registros técnicos de esas etapas. El décimo registro documenta la verificación de la entrega. Las imágenes de las verificaciones del PR y de los nombres de secretos recogen salidas reales de GitHub CLI. Las imágenes de las ejecuciones roja y verde final muestran los resúmenes oficiales de GitHub Actions. La captura de los cuatro casos muestra el JSON descargado del verde final del ciclo.
 
 - [Registro técnico de verificación de la entrega](evidencias/05-verificacion-entrega.txt)
 
-El ZIP reúne este README, las 8 capturas y los 10 registros técnicos. Se volvió a ejecutar `npm test` (3 de 3) y se comprobó que el código de producción, las pruebas y el workflow conservan las versiones verificadas. Para esta actividad se reutilizaron los resultados de Playwright y la evidencia de limpieza del verde final. El [PR #13](https://github.com/jimesssss/mini-inventario/pull/13) sigue abierto y las evidencias finales esperan autorización de publicación.
+El [ZIP publicado](evidencias-dia-06.zip) contiene 19 archivos: la versión del README incluida en la entrega original, ocho capturas y diez registros técnicos. Se volvió a ejecutar `npm test` (3 de 3) y se comprobó que el código de producción, las pruebas y el workflow conservan las versiones verificadas. Para esta actividad se reutilizaron los resultados de Playwright y la evidencia de limpieza del verde final. Las evidencias se publicaron en el commit `c03b5a2b84503f33a7c1fc75bef8da34eb3f1d6d`. La [ejecución 44862140481](https://github.com/jimesssss/mini-inventario/actions/runs/44862140481) confirmó que los cuatro casos de Playwright seguían aprobados después de publicar la documentación.
+
+El ciclo verde → rojo → verde quedó completado. El [PR #13](https://github.com/jimesssss/mini-inventario/pull/13) se fusionó el 20 de noviembre de 2026 a las 21:42, hora de Ciudad de México. El trabajo del Día 6, incluida la entrega de evidencias, quedó integrado en `main` mediante el [commit de fusión `7e73fab3218cf3cd034354f47a448680b4f32388`](https://github.com/jimesssss/mini-inventario/commit/7e73fab3218cf3cd034354f47a448680b4f32388).
