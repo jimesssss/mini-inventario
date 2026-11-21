@@ -144,7 +144,7 @@ test('contraseña incorrecta rechazada', async ({ page }) => {
   await expect(page.locator('#mensaje')).toHaveText(
     'No se pudo iniciar sesión. Revisa tus datos e inténtalo de nuevo.',
   );
-  await expect(page.getByRole('heading', { name: 'Mis productos' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Mis productos' })).toBeHidden();
   await expect(page.getByRole('button', { name: 'Iniciar sesión' })).toBeEnabled();
 });
 
