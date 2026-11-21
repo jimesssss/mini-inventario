@@ -210,3 +210,9 @@ Los enlaces de las Actividades 1 a 4 forman el índice de las ocho capturas y nu
 El [ZIP publicado](evidencias-dia-06.zip) contiene 19 archivos: la versión del README incluida en la entrega original, ocho capturas y diez registros técnicos. Se volvió a ejecutar `npm test` (3 de 3) y se comprobó que el código de producción, las pruebas y el workflow conservan las versiones verificadas. Para esta actividad se reutilizaron los resultados de Playwright y la evidencia de limpieza del verde final. Las evidencias se publicaron en el commit `c03b5a2b84503f33a7c1fc75bef8da34eb3f1d6d`. La [ejecución 44862140481](https://github.com/jimesssss/mini-inventario/actions/runs/44862140481) confirmó que los cuatro casos de Playwright seguían aprobados después de publicar la documentación.
 
 El ciclo verde → rojo → verde quedó completado. El [PR #13](https://github.com/jimesssss/mini-inventario/pull/13) se fusionó el 20 de noviembre de 2026 a las 21:42, hora de Ciudad de México. El trabajo del Día 6, incluida la entrega de evidencias, quedó integrado en `main` mediante el [commit de fusión `7e73fab3218cf3cd034354f47a448680b4f32388`](https://github.com/jimesssss/mini-inventario/commit/7e73fab3218cf3cd034354f47a448680b4f32388).
+
+## Capturas adicionales del proceso
+
+- [Actividad 1 — Preparación y pruebas locales](capturas/chat/01-preparacion-y-pruebas-locales.png). Muestra la bitácora inicial y el resumen de los cuatro casos aprobados en local.
+- [Actividad 2 — Procedimiento para configurar los secretos](capturas/chat/02-procedimiento-secretos-github.png). Muestra las instrucciones de GitHub CLI para registrar y verificar los nombres de los secretos.
+- [Actividad 4 — Registro del fallo controlado](capturas/chat/03-registro-del-fallo-controlado.png). Muestra el resumen del estado rojo y las evidencias guardadas antes del diagnóstico.
