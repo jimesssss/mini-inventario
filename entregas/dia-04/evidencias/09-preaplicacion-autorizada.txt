@@ -1,0 +1,136 @@
+Verificación previa en dia-04-supabase
+MCP oficial: proyecto coincidente, read_only=true.
+SQL local y ZIP anterior: SHA-256 62DB8E4B1627CE5F53B3E9AB120529B6FA1554ECAF057F08D561D15DBB5121C0.
+Misma huella antes y después de la nueva ejecución doble en PGlite.
+npm test: 3/3. git diff --check: 0.
+
+[
+  {
+    "read_only": "on",
+    "rls": true,
+    "policies": [
+      {
+        "cmd": "UPDATE",
+        "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+        "roles": [
+          "authenticated"
+        ],
+        "permissive": "PERMISSIVE",
+        "policyname": "productos_actualizar_propios",
+        "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+      },
+      {
+        "cmd": "SELECT",
+        "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+        "roles": [
+          "authenticated"
+        ],
+        "permissive": "PERMISSIVE",
+        "policyname": "productos_consultar_propios",
+        "with_check": null
+      },
+      {
+        "cmd": "DELETE",
+        "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+        "roles": [
+          "authenticated"
+        ],
+        "permissive": "PERMISSIVE",
+        "policyname": "productos_eliminar_propios",
+        "with_check": null
+      },
+      {
+        "cmd": "INSERT",
+        "qual": null,
+        "roles": [
+          "authenticated"
+        ],
+        "permissive": "PERMISSIVE",
+        "policyname": "productos_registrar_propios",
+        "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+      },
+      {
+        "cmd": "ALL",
+        "qual": "(( SELECT (auth.jwt() ->> 'is_anonymous'::text)) IS DISTINCT FROM 'true'::text)",
+        "roles": [
+          "authenticated"
+        ],
+        "permissive": "RESTRICTIVE",
+        "policyname": "productos_sesion_no_anonima",
+        "with_check": "(( SELECT (auth.jwt() ->> 'is_anonymous'::text)) IS DISTINCT FROM 'true'::text)"
+      }
+    ],
+    "effective": {
+      "anon": {
+        "delete": true,
+        "insert": true,
+        "select": true,
+        "update": true,
+        "trigger": false,
+        "truncate": false,
+        "select_any": true,
+        "insert_cols": [
+          "id",
+          "user_id",
+          "nombre",
+          "sku",
+          "cantidad",
+          "minimo",
+          "created_at"
+        ],
+        "update_cols": [
+          "id",
+          "user_id",
+          "nombre",
+          "sku",
+          "cantidad",
+          "minimo",
+          "created_at"
+        ],
+        "references_any": false
+      },
+      "public": {
+        "delete": false,
+        "insert": false,
+        "select": false,
+        "update": false,
+        "trigger": false,
+        "truncate": false,
+        "select_any": false,
+        "insert_cols": [],
+        "update_cols": [],
+        "references_any": false
+      },
+      "authenticated": {
+        "delete": true,
+        "insert": true,
+        "select": true,
+        "update": true,
+        "trigger": false,
+        "truncate": false,
+        "select_any": true,
+        "insert_cols": [
+          "id",
+          "user_id",
+          "nombre",
+          "sku",
+          "cantidad",
+          "minimo",
+          "created_at"
+        ],
+        "update_cols": [
+          "id",
+          "user_id",
+          "nombre",
+          "sku",
+          "cantidad",
+          "minimo",
+          "created_at"
+        ],
+        "references_any": false
+      }
+    }
+  }
+]
+
+Flujo de limpieza simulado: 2/2. La matriz correcta permite eliminar las dos filas esperadas y la lectura cruzada bloquea toda eliminación. La primera simulación usó texto con acentos por una tubería de consola y falló al comparar el nombre de prueba. La repetición con literales Unicode explícitos pasó.

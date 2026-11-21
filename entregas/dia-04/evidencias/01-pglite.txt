@@ -1,0 +1,11 @@
+Comando: node entregas/dia-04/validar-pglite.mjs <ruta temporal de PGlite>/dist/index.js
+Código de salida: 0
+
+PostgreSQL 18.7 (PGlite 0.5.17) on wasm32-unknown-emscripten, compiled by emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 6.0.13 (e13ee988ce3d87a738dd8f3661d02223308c412a), 32-bit
+Privilegios antes: [{"role":"anon","read":true,"remove":true,"table_insert":true,"table_update":true,"insert_cols":["id","user_id","nombre","sku","cantidad","minimo","created_at"],"update_cols":["id","user_id","nombre","sku","cantidad","minimo","created_at"]},{"role":"authenticated","read":true,"remove":true,"table_insert":true,"table_update":true,"insert_cols":["id","user_id","nombre","sku","cantidad","minimo","created_at"],"update_cols":["id","user_id","nombre","sku","cantidad","minimo","created_at"]},{"role":"public","read":false,"remove":false,"table_insert":false,"table_update":false,"insert_cols":[],"update_cols":[]}]
+Privilegios después: [{"role":"anon","read":false,"remove":false,"table_insert":false,"table_update":false,"insert_cols":[],"update_cols":[]},{"role":"authenticated","read":true,"remove":true,"table_insert":false,"table_update":false,"insert_cols":["user_id","nombre","sku","cantidad","minimo"],"update_cols":["nombre","sku","cantidad","minimo"]},{"role":"public","read":false,"remove":false,"table_insert":false,"table_update":false,"insert_cols":[],"update_cols":[]}]
+PASS: dos aplicaciones, privilegios esperados, RLS activa, cinco políticas y filas originales intactas
+PASS: anon sin SELECT, INSERT, UPDATE ni DELETE
+PASS: WITH CHECK de UPDATE impide transferir una fila incluso con permiso temporal sobre user_id
+PASS: alta y edición propias, valores automáticos, columnas protegidas y aislamiento entre dos identidades
+PASS: bloqueo de sesión anónima, borrado propio y preservación de filas originales

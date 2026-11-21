@@ -1,0 +1,146 @@
+Configuración verificada: {"Enabled":true,"Official":true,"ReadOnly":true,"MatchesApp":true}
+Fuente: dos SELECT de catálogo mediante el MCP oficial. Alcance: public.productos.
+
+RLS, políticas y privilegios directos de tabla:
+[
+  {
+    "relrowsecurity": true,
+    "relforcerowsecurity": false,
+    "read_only": "on",
+    "policies": [
+      {
+        "cmd": "UPDATE",
+        "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+        "roles": [
+          "authenticated"
+        ],
+        "permissive": "PERMISSIVE",
+        "policyname": "productos_actualizar_propios",
+        "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+      },
+      {
+        "cmd": "SELECT",
+        "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+        "roles": [
+          "authenticated"
+        ],
+        "permissive": "PERMISSIVE",
+        "policyname": "productos_consultar_propios",
+        "with_check": null
+      },
+      {
+        "cmd": "DELETE",
+        "qual": "(user_id = ( SELECT auth.uid() AS uid))",
+        "roles": [
+          "authenticated"
+        ],
+        "permissive": "PERMISSIVE",
+        "policyname": "productos_eliminar_propios",
+        "with_check": null
+      },
+      {
+        "cmd": "INSERT",
+        "qual": null,
+        "roles": [
+          "authenticated"
+        ],
+        "permissive": "PERMISSIVE",
+        "policyname": "productos_registrar_propios",
+        "with_check": "(user_id = ( SELECT auth.uid() AS uid))"
+      },
+      {
+        "cmd": "ALL",
+        "qual": "(( SELECT (auth.jwt() ->> 'is_anonymous'::text)) IS DISTINCT FROM 'true'::text)",
+        "roles": [
+          "authenticated"
+        ],
+        "permissive": "RESTRICTIVE",
+        "policyname": "productos_sesion_no_anonima",
+        "with_check": "(( SELECT (auth.jwt() ->> 'is_anonymous'::text)) IS DISTINCT FROM 'true'::text)"
+      }
+    ],
+    "grants": [
+      [
+        "anon",
+        "DELETE"
+      ],
+      [
+        "anon",
+        "INSERT"
+      ],
+      [
+        "anon",
+        "SELECT"
+      ],
+      [
+        "anon",
+        "UPDATE"
+      ],
+      [
+        "authenticated",
+        "DELETE"
+      ],
+      [
+        "authenticated",
+        "INSERT"
+      ],
+      [
+        "authenticated",
+        "SELECT"
+      ],
+      [
+        "authenticated",
+        "UPDATE"
+      ]
+    ]
+  }
+]
+
+Concesiones directas por columna:
+[
+  {
+    "attname": "user_id",
+    "role": "authenticated",
+    "privilege_type": "INSERT"
+  },
+  {
+    "attname": "nombre",
+    "role": "authenticated",
+    "privilege_type": "INSERT"
+  },
+  {
+    "attname": "nombre",
+    "role": "authenticated",
+    "privilege_type": "UPDATE"
+  },
+  {
+    "attname": "sku",
+    "role": "authenticated",
+    "privilege_type": "INSERT"
+  },
+  {
+    "attname": "sku",
+    "role": "authenticated",
+    "privilege_type": "UPDATE"
+  },
+  {
+    "attname": "cantidad",
+    "role": "authenticated",
+    "privilege_type": "INSERT"
+  },
+  {
+    "attname": "cantidad",
+    "role": "authenticated",
+    "privilege_type": "UPDATE"
+  },
+  {
+    "attname": "minimo",
+    "role": "authenticated",
+    "privilege_type": "INSERT"
+  },
+  {
+    "attname": "minimo",
+    "role": "authenticated",
+    "privilege_type": "UPDATE"
+  }
+]
