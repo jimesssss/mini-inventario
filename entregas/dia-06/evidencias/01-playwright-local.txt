@@ -1,0 +1,35 @@
+# Día 6 — Actividad 1 · ejecución local
+Fecha local: 20 de noviembre de 2026.
+Rama: dia-06-ci. Base: 2893377821ef21f2faa7c7e7c7cbdbdc3f14cc07.
+Playwright: código de salida 0.
+
+v22.20.0
+10.9.3
+Version 1.65.1
+gh version 2.103.2 (2026-10-23)
+TEST_EMAIL: configurada
+TEST_PASSWORD: configurada
+SUPABASE_URL: configurada
+SUPABASE_PUBLISHABLE_KEY: configurada
+Dependencias: Express, Supabase JS y Playwright Test disponibles.
+GET / y GET /api/salud: HTTP 200; aplicación y proyecto de prueba verificados.
+Comando: npx playwright test
+
+Running 4 tests using 1 worker
+
+  ok 1 tests\inventario.spec.js:137:1 › inicio de sesión válido (2.7s)
+  ok 2 tests\inventario.spec.js:141:1 › contraseña incorrecta rechazada (1.3s)
+[alta prevista] SKU PRUEBA-D05-E2E-CA1418D3-DC50-44D6-B652-FFA8E971C16A
+[creado] SKU PRUEBA-D05-E2E-CA1418D3-DC50-44D6-B652-FFA8E971C16A | ID 1f768170-bf3e-413a-a0e4-1ea65cba5daf
+[limpieza verificada] SKU PRUEBA-D05-E2E-CA1418D3-DC50-44D6-B652-FFA8E971C16A | ID 1f768170-bf3e-413a-a0e4-1ea65cba5daf | filas restantes: 0
+  ok 3 tests\inventario.spec.js:151:1 › agregar producto ficticio (2.7s)
+[alta prevista] SKU PRUEBA-D05-E2E-4A80A03F-FD76-4F52-8445-4415FA1B0EF9
+[creado] SKU PRUEBA-D05-E2E-4A80A03F-FD76-4F52-8445-4415FA1B0EF9 | ID 299b8620-0e33-4bc2-b0af-8267f5d46341
+[limpieza verificada] SKU PRUEBA-D05-E2E-4A80A03F-FD76-4F52-8445-4415FA1B0EF9 | ID 299b8620-0e33-4bc2-b0af-8267f5d46341 | filas restantes: 0
+  ok 4 tests\inventario.spec.js:156:1 › detectar existencias bajas (1.9s)
+
+  4 passed (11.6s)
+
+Verificación independiente por MCP en solo lectura:
+{"solo_lectura":"on","prueba_restantes":0,"otras_mismo_conteo":true,"otras_misma_huella":true}
+El conteo y la huella de las demás filas coincidieron. No se registraron los datos de las filas ni la huella.

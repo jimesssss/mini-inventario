@@ -8,6 +8,7 @@ const envFile = join(__dirname, '.env');
 if (existsSync(envFile)) loadEnvFile(envFile);
 
 const baseURL = 'http://localhost:3000';
+const enCI = process.env.CI === 'true';
 
 module.exports = defineConfig({
   testDir: './tests',
@@ -19,7 +20,8 @@ module.exports = defineConfig({
   outputDir: join(tmpdir(), `mini-inventario-playwright-${process.pid}`),
   use: {
     baseURL,
-    channel: 'chrome',
+    // Playwright administra Chromium en CI y usa Chrome instalado en local.
+    ...(enCI ? { browserName: 'chromium' } : { channel: 'chrome' }),
     actionTimeout: 10000,
     navigationTimeout: 12000,
     trace: 'off',
@@ -30,7 +32,7 @@ module.exports = defineConfig({
     command: 'npm start',
     url: `${baseURL}/api/salud`,
     env: { PORT: '3000' },
-    reuseExistingServer: true,
+    reuseExistingServer: !enCI,
     timeout: 30000,
   },
 });

@@ -1,0 +1,28 @@
+# Día 6 — Actividad 3 · validación local de GitHub Actions
+
+Rama: dia-06-ci. Base: 2893377821ef21f2faa7c7e7c7cbdbdc3f14cc07.
+GitHub CLI confirmó los cuatro nombres de secretos y el main remoto. No consultó sus valores.
+
+Validación de .github/workflows/ci.yml con actionlint y SHA-256 del paquete ZIP verificado:
+1.7.12
+installed by downloading from release page
+built with go1.26.1 compiler for windows/amd64
+actionlint: workflow válido, código 0
+
+Configuración local, modo CI y npx playwright test --list:
+Modo local: Chrome, reutiliza servidor
+Modo CI: Chromium, servidor propio en 3000, un trabajador
+Listing tests:
+  inventario.spec.js:137:1 › inicio de sesión válido
+  inventario.spec.js:141:1 › contraseña incorrecta rechazada
+  inventario.spec.js:151:1 › agregar producto ficticio
+  inventario.spec.js:156:1 › detectar existencias bajas
+Total: 4 tests in 1 file
+
+Prueba aislada del reportero con dos casos sintéticos:
+Playwright aislado: salida 1 esperada; reporte generado con passed y failed.
+El marcador ficticio de stdout, error y adjunto no aparece en el reporte ni en la salida de consola.
+
+npm test: 3 de 3.
+git diff --check: código 0.
+La suite real permaneció intacta. No se ejecutó en GitHub Actions durante esta actividad ni se escribieron productos en Supabase.
