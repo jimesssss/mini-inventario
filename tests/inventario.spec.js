@@ -116,8 +116,10 @@ const test = base.extend({
           console.log(`[sin fila visible tras el intento] SKU ${sku}`);
         } else {
           const [fila] = filas;
-          if (filas.length !== 1 || !identificador.test(fila?.id) || (id && fila.id !== id) ||
-              Object.entries(producto).some(([campo, valor]) => fila[campo] !== valor)) {
+          // Una edición puede cambiar los valores. Si el alta confirmó el ID, validar ese ID y el SKU.
+          const coincide = id ? fila?.id === id
+            : Object.entries(producto).every(([campo, valor]) => fila?.[campo] === valor);
+          if (filas.length !== 1 || !identificador.test(fila?.id) || !coincide) {
             throw new Error(`Limpieza detenida: la fila no coincide con el producto de prueba ${sku}.`);
           }
           if (!id) console.log(`[recuperado] SKU ${sku} | ID ${fila.id}`);
@@ -157,4 +159,30 @@ test('detectar existencias bajas', async ({ productoTemporal }) => {
   const fila = await productoTemporal({ nombre: 'Existencias bajas automatizadas Día 5', cantidad: 3, minimo: 10 });
   await expect(fila.getByRole('cell', { name: 'Existencias bajas', exact: true })).toBeVisible();
   await expect(fila).toHaveAttribute('data-bajo-minimo', '');
+});
+
+test('editar producto y conservar los cambios al recargar', async ({ page, productoTemporal }) => {
+  const original = { nombre: 'Producto para editar', cantidad: 12, minimo: 4 };
+  const editado = { nombre: 'Producto editado', cantidad: 2, minimo: 6 };
+  const fila = await productoTemporal(original);
+  const sku = await page.locator('#buscar-productos').inputValue();
+  await expect(fila.getByRole('cell', { name: 'Disponible', exact: true })).toBeVisible();
+  await fila.getByRole('button', { name: `Editar ${original.nombre}`, exact: true }).click();
+
+  const formulario = page.locator('#formulario-producto');
+  await expect(page.getByRole('heading', { name: 'Editar producto', exact: true })).toBeVisible();
+  await expect(formulario.getByLabel('SKU', { exact: true })).toHaveValue(sku);
+  for (const [campo, etiqueta] of Object.entries({ nombre: 'Nombre', cantidad: 'Cantidad', minimo: 'Mínimo' })) {
+    const entrada = formulario.getByLabel(etiqueta, { exact: true });
+    await expect(entrada).toHaveValue(String(original[campo]));
+    await entrada.fill(String(editado[campo]));
+  }
+  await formulario.getByRole('button', { name: 'Guardar', exact: true }).click();
+  await expect(page.locator('#mensaje')).toHaveText('Producto actualizado.');
+  const celdas = fila.getByRole('cell');
+  const valoresGuardados = [editado.nombre, sku, String(editado.cantidad), String(editado.minimo), 'Existencias bajas'];
+  await expect(celdas).toHaveText([...valoresGuardados, /Editar\s*Eliminar/]);
+
+  await page.reload();
+  await expect(celdas).toHaveText([...valoresGuardados, /Editar\s*Eliminar/]);
 });
