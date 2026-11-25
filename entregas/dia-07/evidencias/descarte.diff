@@ -1,0 +1,64 @@
+diff --git a/entregas/dia-07/prueba-edicion.md b/entregas/dia-07/prueba-edicion.md
+new file mode 100644
+index 0000000..cb8769b
+--- /dev/null
++++ b/entregas/dia-07/prueba-edicion.md
+@@ -0,0 +1,11 @@
++# Prueba de edición de productos
++
++El caso `editar producto y conservar los cambios al recargar` cubre la edición válida de HU-04. Comprueba que el formulario carga los cuatro valores existentes, cambia el nombre, la cantidad y el mínimo, y verifica que la fila conserva el SKU y muestra «Existencias bajas» después de guardar y al recargar.
++
++## Verificación local
++
++- Node.js 22.20.0. El comando `node --check tests/inventario.spec.js` terminó correctamente.
++- Playwright descubrió cinco casos con `test --list`, incluido el nuevo.
++- Las tres pruebas de Node.js en `test/interfaz.test.js` y `test/productos.test.js` pasaron.
++- El directorio de trabajo carecía de configuración local de Supabase y de credenciales para la cuenta de pruebas. La ejecución completa requiere esa configuración o el workflow de GitHub Actions.
++- NVM tenía Node.js 22 instalado sin una versión activa. La verificación usó directamente el ejecutable de Node.js 22.20.0 y las dependencias instaladas en el directorio principal del mismo repositorio.
+diff --git a/tests/inventario.spec.js b/tests/inventario.spec.js
+index cc51c25..3034623 100644
+--- a/tests/inventario.spec.js
++++ b/tests/inventario.spec.js
+@@ -116,8 +116,10 @@ const test = base.extend({
+           console.log(`[sin fila visible tras el intento] SKU ${sku}`);
+         } else {
+           const [fila] = filas;
+-          if (filas.length !== 1 || !identificador.test(fila?.id) || (id && fila.id !== id) ||
+-              Object.entries(producto).some(([campo, valor]) => fila[campo] !== valor)) {
++          // Una edición puede cambiar los valores. Si el alta confirmó el ID, validar ese ID y el SKU.
++          const coincide = id ? fila?.id === id
++            : Object.entries(producto).every(([campo, valor]) => fila?.[campo] === valor);
++          if (filas.length !== 1 || !identificador.test(fila?.id) || !coincide) {
+             throw new Error(`Limpieza detenida: la fila no coincide con el producto de prueba ${sku}.`);
+           }
+           if (!id) console.log(`[recuperado] SKU ${sku} | ID ${fila.id}`);
+@@ -158,3 +160,29 @@ test('detectar existencias bajas', async ({ productoTemporal }) => {
+   await expect(fila.getByRole('cell', { name: 'Existencias bajas', exact: true })).toBeVisible();
+   await expect(fila).toHaveAttribute('data-bajo-minimo', '');
+ });
++
++test('editar producto y conservar los cambios al recargar', async ({ page, productoTemporal }) => {
++  const original = { nombre: 'Producto para editar', cantidad: 12, minimo: 4 };
++  const editado = { nombre: 'Producto editado', cantidad: 2, minimo: 6 };
++  const fila = await productoTemporal(original);
++  const sku = await page.locator('#buscar-productos').inputValue();
++  await expect(fila.getByRole('cell', { name: 'Disponible', exact: true })).toBeVisible();
++  await fila.getByRole('button', { name: `Editar ${original.nombre}`, exact: true }).click();
++
++  const formulario = page.locator('#formulario-producto');
++  await expect(page.getByRole('heading', { name: 'Editar producto', exact: true })).toBeVisible();
++  await expect(formulario.getByLabel('SKU', { exact: true })).toHaveValue(sku);
++  for (const [campo, etiqueta] of Object.entries({ nombre: 'Nombre', cantidad: 'Cantidad', minimo: 'Mínimo' })) {
++    const entrada = formulario.getByLabel(etiqueta, { exact: true });
++    await expect(entrada).toHaveValue(String(original[campo]));
++    await entrada.fill(String(editado[campo]));
++  }
++  await formulario.getByRole('button', { name: 'Guardar', exact: true }).click();
++  await expect(page.locator('#mensaje')).toHaveText('Producto actualizado.');
++  const celdas = fila.getByRole('cell');
++  const valoresGuardados = [editado.nombre, sku, String(editado.cantidad), String(editado.minimo), 'Existencias bajas'];
++  await expect(celdas).toHaveText([...valoresGuardados, /Editar\s*Eliminar/]);
++
++  await page.reload();
++  await expect(celdas).toHaveText([...valoresGuardados, /Editar\s*Eliminar/]);
++});

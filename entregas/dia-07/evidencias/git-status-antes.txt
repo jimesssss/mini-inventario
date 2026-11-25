@@ -1,0 +1,3 @@
+## HEAD (no branch)
+A  entregas/dia-07/prueba-edicion.md
+M  tests/inventario.spec.js

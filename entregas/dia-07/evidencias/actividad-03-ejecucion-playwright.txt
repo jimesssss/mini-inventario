@@ -1,0 +1,28 @@
+Día 7 · Actividad 3 · Ejecución de la prueba de edición
+Fecha local: 24 de noviembre de 2026.
+Rama: dia-07-prueba-editar-producto.
+Node.js v22.20.0 · Playwright Test 1.65.1 · Chrome local · Supabase.
+
+Comando (ejecutado con la instalación local de Node.js 22 en PATH):
+node node_modules/@playwright/test/cli.js test tests/inventario.spec.js -g "editar producto y rechazar un nombre vacío" --reporter=line
+
+Verificación previa:
+- Se comprobó la presencia de las cuatro variables de prueba en el .env ignorado y que el entorno no aportaba valores diferentes. La configuración local está documentada como la de la cuenta de prueba en los Días 5 y 6. La última modificación del .env precede a la ejecución registrada del Día 6.
+- El fixture comprueba que el SKU generado con randomUUID() esté libre. Confirma el SKU y el UUID de la respuesta de alta. En finally, busca el SKU mediante la sesión propietaria, coteja el ID, elimina por ID y exige HTTP 204 y cero coincidencias por SKU. Si falta el ID del alta, exige una sola coincidencia con todos los datos sintéticos antes de borrar.
+- El archivo de trabajo y la copia archivada con la skill tienen el mismo blob Git, 51f4c0e9af801ddda75f5205c4f428a7ca90615f.
+
+Extracto de la salida observada:
+Running 1 test using 1 worker
+
+[1/1] tests\inventario.spec.js:162:1 › editar producto y rechazar un nombre vacío
+[alta prevista] SKU PRUEBA-D05-E2E-03EC768E-C1CA-4954-AEBB-437E2B343391
+[creado] SKU PRUEBA-D05-E2E-03EC768E-C1CA-4954-AEBB-437E2B343391 | ID 36de3804-f28b-4b1a-9b89-2df430f37e08
+[limpieza verificada] SKU PRUEBA-D05-E2E-03EC768E-C1CA-4954-AEBB-437E2B343391 | ID 36de3804-f28b-4b1a-9b89-2df430f37e08 | filas restantes: 0
+
+  1 passed (13.1s)
+
+Código de salida: 0.
+
+El intento inicial en el sandbox quedó detenido durante el arranque del servidor web. Se interrumpió antes de que Playwright anunciara el inicio del caso. La ejecución escalada con la misma prueba completó el caso y la limpieza. La advertencia de Node sobre NO_COLOR y FORCE_COLOR también apareció en la ejecución aprobada y no afectó al resultado.
+
+El caso recorrió el guardado válido, la recarga con nueva autenticación, el rechazo del nombre de solo espacios y la comprobación de los datos guardados tras otra recarga. La limpieza se observó al terminar el caso aprobado. Se revisó que finally también se ejecute si falla una aserción. No se provocó un fallo artificial.

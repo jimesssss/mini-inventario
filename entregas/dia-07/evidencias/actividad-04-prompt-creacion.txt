@@ -1,0 +1,3 @@
+Crea un subagente llamado revisor-pr en el formato correcto para este agente.
+
+Su trabajo es revisar git diff main en busca de secretos, cambios sin pruebas y consultas sin protección por usuario. Debe responder con una lista de hallazgos, archivo y gravedad. No debe modificar archivos ni ejecutar comandos que cambien el proyecto.

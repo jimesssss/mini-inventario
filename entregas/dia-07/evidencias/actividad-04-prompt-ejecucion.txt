@@ -1,0 +1,13 @@
+Utiliza el subagente revisor-pr para revisar los cambios actuales del proyecto Mini Inventario mediante git diff main.
+
+Delega realmente la revisión al subagente revisor-pr y espera su respuesta.
+
+Identifica secretos expuestos, cambios sin pruebas suficientes y consultas o escrituras sin protección por usuario.
+
+Presenta los hallazgos indicando archivo, línea, gravedad, descripción del problema y recomendación.
+
+Indica también las limitaciones de la revisión, incluyendo los archivos no rastreados que git diff main no contempla.
+
+No reproduzcas credenciales ni valores secretos. No modifiques archivos, no realices correcciones, no modifiques Supabase y no utilices SQLite.
+
+No realices commits, push ni merge. Al finalizar, muestra el informe del subagente y espera mis instrucciones.

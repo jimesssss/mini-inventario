@@ -1,0 +1,36 @@
+Continuemos con la Actividad 2 del Día 7 de Mini Inventario: creación de nuestra propia skill.
+
+Trabaja en la rama dia-07-skill y conserva toda la documentación y las evidencias de la Actividad 1.
+
+Crea el archivo .agents/skills/pruebas-inventario/SKILL.md.
+
+La skill debe incluir un encabezado YAML válido con el nombre pruebas-inventario y una descripción clara que permita activarla cuando se soliciten pruebas de Mini Inventario.
+
+Incluye las siguientes reglas obligatorias:
+
+- Utilizar Playwright para las pruebas de interfaz.
+- Colocar las pruebas en la carpeta tests/.
+- Obtener las credenciales mediante variables de entorno.
+- No escribir contraseñas ni claves directamente en el código.
+- Utilizar Supabase como única base de datos.
+- Generar un SKU único para cada producto de prueba.
+- Eliminar únicamente los productos creados por la propia prueba, incluso si esta falla.
+- Utilizar selectores por rol o etiqueta, evitando selectores frágiles.
+- Cubrir al menos un caso correcto y un caso de error.
+- Respetar el aislamiento de datos entre usuarios.
+- Reutilizar los fixtures existentes cuando sea apropiado.
+- No afirmar que una prueba funciona si no se ha ejecutado.
+
+Revisa la estructura actual del proyecto para que las instrucciones sean compatibles con nuestra implementación.
+
+Verifica que el archivo SKILL.md tenga el formato correcto y que Codex pueda descubrir la skill.
+
+Actualiza entregas/dia-07/README.md con la Actividad 2 y guarda las evidencias textuales correspondientes. Conserva los prompts, comandos, resultados y decisiones reales.
+
+No inventes evidencias ni capturas. Yo agregaré las capturas al finalizar el Día 7.
+
+No generes todavía la segunda prueba de edición, porque debemos realizarla posteriormente en una conversación limpia para que la comparación sea válida.
+
+No modifiques Supabase, no utilices SQLite y no realices commits, push ni merge sin mi autorización.
+
+Al finalizar, muestra el contenido de la skill, explica cómo verificaste su estructura y confirma si la Actividad 2 quedó terminada. Espera mis instrucciones.

@@ -1,0 +1,23 @@
+Estamos realizando la Actividad 1 del Día 7: generar una prueba de Playwright para editar un producto SIN utilizar la nueva skill pruebas-inventario.
+
+
+
+Antes de descartar la prueba, necesito conservar la evidencia del resultado inicial.
+
+1. Identifica exactamente los archivos que modificaste o creaste.
+2. Muéstrame el código completo de la prueba de edición que generaste.
+3. Confirma si ejecutaste la prueba y cuál fue el resultado real. No afirmes que pasó si no existe evidencia.
+4. Revisa si modificaste alguna de las cuatro pruebas anteriores de Playwright.
+5. Confirma que el archivo de documentación creado contiene el código inicial, los resultados y los problemas encontrados.
+6. Verifica el estado actual con git status y git diff.
+
+IMPORTANTE:
+
+- No crees todavía la skill pruebas-inventario.
+- No modifiques archivos adicionales.
+- No borres ni descartes nada todavía.
+- No hagas commit ni push.
+- No modifiques las entregas de los Días 1 al 6.
+- No muestres credenciales ni valores secretos.
+
+Solo quiero un informe claro de lo que hiciste y qué debemos conservar como evidencia de la primera prueba.

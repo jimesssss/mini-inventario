@@ -1,0 +1,9 @@
+Fecha local: 2026-11-24T16:53:21.8247419-06:00
+Clon temporal: C:\Users\<usuario>\AppData\Local\Temp\mini-inventario-dia-07-descarte-e06d9e6a773c4d29afbb8fa10dbd6d17
+Commit original: 9f4836d69aa983de5adc79584a3318ffc2bdfa36
+Commit padre: 412bbc3eda3e06f41c97a57a70b96325c1925c93
+Arbol comprobado contra el commit: 42a17f38990180797434dd48c8453d9c64375cd7
+git diff --exit-code HEAD -- en el clon tras restaurar: 0
+git status --porcelain=v1 --untracked-files=all en el clon: salida vacia
+Referencias locales y de seguimiento antes y despues: sin diferencias
+Estado local antes y despues, excluyendo la entrega propia: sin diferencias
