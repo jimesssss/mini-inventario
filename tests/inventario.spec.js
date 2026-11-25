@@ -1,8 +1,8 @@
 const { expect, test: base } = require('@playwright/test');
 const { randomUUID } = require('node:crypto');
+const { conLimpieza, identificador, limpiarProductoTemporal } = require('./limpieza-producto-temporal');
 
 const rutaProductos = '/api/productos';
-const identificador = /^[a-f\d]{8}(?:-[a-f\d]{4}){3}-[a-f\d]{12}$/i;
 const origenLocal = 'http://localhost:3000';
 
 base.beforeEach(async ({ page }) => {
@@ -59,11 +59,11 @@ async function iniciarSesion(page) {
   return { authorization };
 }
 
-async function buscarPorSku(page, headers, sku) {
+async function listarDelPropietario(page, headers) {
   const respuesta = await page.request.get(rutaProductos, { headers, maxRedirects: 0, timeout: 8000 });
-  if (!respuesta.ok()) throw new Error(`No se pudo verificar el SKU de prueba (HTTP ${respuesta.status()}).`);
+  if (!respuesta.ok()) throw new Error(`No se pudo consultar el inventario del propietario (HTTP ${respuesta.status()}).`);
   const { productos } = await respuesta.json();
-  return productos.filter((producto) => producto.sku.toUpperCase() === sku);
+  return productos;
 }
 
 const test = base.extend({
@@ -74,10 +74,10 @@ const test = base.extend({
     let id;
     let intento = false;
 
-    try {
-      await use(async ({ nombre, cantidad, minimo }) => {
+    await conLimpieza(
+      () => use(async ({ nombre, cantidad, minimo }) => {
         headers = await iniciarSesion(page);
-        if ((await buscarPorSku(page, headers, sku)).length !== 0) {
+        if ((await listarDelPropietario(page, headers)).some((fila) => fila.sku.toUpperCase() === sku)) {
           throw new Error('El SKU de la prueba ya existía.');
         }
         producto = { nombre, sku, cantidad, minimo };
@@ -107,30 +107,30 @@ const test = base.extend({
         const fila = page.locator('#productos tr').filter({ has: page.getByRole('cell', { name: sku, exact: true }) });
         await expect(fila.getByRole('cell', { name: nombre, exact: true })).toBeVisible();
         return fila;
-      });
-    } finally {
-      if (intento) {
-        // Si se perdió la respuesta del alta, solo recuperar la fila del SKU único y con todos los datos esperados.
-        const filas = await buscarPorSku(page, headers, sku);
-        if (filas.length === 0 && !id) {
+      }),
+      async () => {
+        if (!intento) return;
+        // El listado y el borrado usan el mismo token del alta. Ambas rutas filtran por user_id en el servidor.
+        const fila = await limpiarProductoTemporal({
+          producto,
+          id,
+          listarDelPropietario: () => listarDelPropietario(page, headers),
+          eliminarDelPropietario: async (idTemporal) => {
+            const respuesta = await page.request.delete(`${rutaProductos}/${idTemporal}`, {
+              headers, maxRedirects: 0, timeout: 8000,
+            });
+            if (respuesta.status() !== 204) {
+              throw new Error(`Limpieza no confirmada para SKU ${sku} | ID ${idTemporal} (HTTP ${respuesta.status()}).`);
+            }
+          },
+        });
+        if (!fila) {
           console.log(`[sin fila visible tras el intento] SKU ${sku}`);
         } else {
-          const [fila] = filas;
-          if (filas.length !== 1 || !identificador.test(fila?.id) || (id && fila.id !== id) ||
-              Object.entries(producto).some(([campo, valor]) => fila[campo] !== valor)) {
-            throw new Error(`Limpieza detenida: la fila no coincide con el producto de prueba ${sku}.`);
-          }
-          if (!id) console.log(`[recuperado] SKU ${sku} | ID ${fila.id}`);
-          const eliminada = await page.request.delete(`${rutaProductos}/${fila.id}`, {
-            headers, maxRedirects: 0, timeout: 8000,
-          });
-          if (eliminada.status() !== 204 || (await buscarPorSku(page, headers, sku)).length !== 0) {
-            throw new Error(`Limpieza no confirmada para SKU ${sku} | ID ${fila.id}.`);
-          }
-          console.log(`[limpieza verificada] SKU ${sku} | ID ${fila.id} | filas restantes: 0`);
+          console.log(`[limpieza verificada] SKU original ${sku} | SKU encontrado ${fila.sku} | ID ${fila.id} | filas restantes: 0`);
         }
-      }
-    }
+      },
+    );
   }, { timeout: 30000 }],
 });
 
@@ -157,4 +157,52 @@ test('detectar existencias bajas', async ({ productoTemporal }) => {
   const fila = await productoTemporal({ nombre: 'Existencias bajas automatizadas Día 5', cantidad: 3, minimo: 10 });
   await expect(fila.getByRole('cell', { name: 'Existencias bajas', exact: true })).toBeVisible();
   await expect(fila).toHaveAttribute('data-bajo-minimo', '');
+});
+
+test('editar producto y rechazar un nombre vacío', async ({ page, productoTemporal }) => {
+  const original = { nombre: 'Producto temporal para edición', cantidad: 12, minimo: 4 };
+  const actualizado = { nombre: 'Producto temporal editado', cantidad: 2, minimo: 9 };
+  const fila = await productoTemporal(original);
+  const buscar = page.getByLabel('Buscar por nombre o SKU');
+  const sku = await buscar.inputValue();
+  const formulario = page.getByRole('group', { name: 'Datos del producto' });
+  const nombre = formulario.getByLabel('Nombre', { exact: true });
+  const cantidad = formulario.getByLabel('Cantidad');
+  const minimo = formulario.getByLabel('Mínimo');
+  const guardar = formulario.getByRole('button', { name: 'Guardar' });
+
+  await fila.getByRole('button', { name: `Editar ${original.nombre}` }).click();
+  await expect(nombre).toHaveValue(original.nombre);
+  await expect(formulario.getByLabel('SKU')).toHaveValue(sku);
+  await expect(cantidad).toHaveValue(String(original.cantidad));
+  await expect(minimo).toHaveValue(String(original.minimo));
+
+  await nombre.fill(actualizado.nombre);
+  await cantidad.fill(String(actualizado.cantidad));
+  await minimo.fill(String(actualizado.minimo));
+  await guardar.click();
+  await expect(page.getByText('Producto actualizado.', { exact: true })).toBeVisible();
+  await expect(fila.getByRole('cell', { name: actualizado.nombre, exact: true })).toBeVisible();
+  await expect(fila.getByRole('cell', { name: 'Existencias bajas', exact: true })).toBeVisible();
+
+  await page.reload();
+  await iniciarSesion(page);
+  await buscar.fill(sku);
+  await fila.getByRole('button', { name: `Editar ${actualizado.nombre}` }).click();
+  await expect(nombre).toHaveValue(actualizado.nombre);
+  await expect(formulario.getByLabel('SKU')).toHaveValue(sku);
+  await expect(cantidad).toHaveValue(String(actualizado.cantidad));
+  await expect(minimo).toHaveValue(String(actualizado.minimo));
+
+  await nombre.fill('   ');
+  await cantidad.fill('15');
+  await guardar.click();
+  await expect(nombre).toHaveAttribute('aria-invalid', 'true');
+  await expect(page.getByText('Revisa los campos indicados.', { exact: true })).toBeVisible();
+
+  await page.reload();
+  await iniciarSesion(page);
+  await buscar.fill(sku);
+  await expect(fila.getByRole('cell', { name: actualizado.nombre, exact: true })).toBeVisible();
+  await expect(fila.getByRole('cell', { name: String(actualizado.cantidad), exact: true })).toBeVisible();
 });
