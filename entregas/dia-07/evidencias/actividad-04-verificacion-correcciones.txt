@@ -1,0 +1,33 @@
+Día 7 · Actividad 4 · Verificación de las correcciones
+Rama: dia-07-revisor-pr. Node.js v22.20.0. Playwright 1.65.1.
+
+Pruebas controladas con node --test test/limpieza-producto-temporal.test.js:
+ok 1 - limpia por ID tras una aserción fallida aunque cambie el SKU
+ok 2 - recupera un alta sin ID solo si coincide todo el producto sintético
+ok 3 - rechaza el borrado si el SKU y el ID confirmado apuntan a filas distintas
+ok 4 - rechaza el borrado sin ID si los datos sintéticos no coinciden
+ok 5 - rechaza el borrado sin ID si hay más de una coincidencia por SKU
+ok 6 - exige ausencia después del borrado por ID, SKU original y SKU encontrado
+# tests 6
+# pass 6
+# fail 0
+
+La prueba controlada provoca una aserción fallida y verifica que la limpieza se ejecute y que la aserción original se propague. Las pruebas controladas no utilizan red, navegador ni base de datos.
+
+Verificación previa de la ejecución en Chrome:
+El .env ignorado conserva la fecha de modificación del 20 de noviembre de 2026. Se comprobó que las cuatro variables de prueba estaban configuradas y que el entorno no sustituía sus valores. Se usó la misma cuenta de pruebas documentada anteriormente. El listado y el borrado reutilizan la sesión del alta y sus rutas aplican el filtro por propietario.
+
+Comando:
+node node_modules/@playwright/test/cli.js test tests/inventario.spec.js -g "editar producto y rechazar un nombre vacío" --reporter=line
+
+Extracto de la salida observada, código de salida 0:
+Running 1 test using 1 worker
+[1/1] tests\inventario.spec.js:162:1 › editar producto y rechazar un nombre vacío
+[alta prevista] SKU PRUEBA-D05-E2E-A3806BBF-4559-4A08-BB26-89D5C95C3CE1
+[creado] SKU PRUEBA-D05-E2E-A3806BBF-4559-4A08-BB26-89D5C95C3CE1 | ID 47950dd7-7751-472e-8fd8-2afcc70fdbc8
+[limpieza verificada] SKU original PRUEBA-D05-E2E-A3806BBF-4559-4A08-BB26-89D5C95C3CE1 | SKU encontrado PRUEBA-D05-E2E-A3806BBF-4559-4A08-BB26-89D5C95C3CE1 | ID 47950dd7-7751-472e-8fd8-2afcc70fdbc8 | filas restantes: 0
+  1 passed (11.2s)
+
+El caso real conserva el SKU, confirma la edición, el rechazo del nombre en blanco y la persistencia tras recargar. La recuperación tras cambiar el SKU y las ramas ambiguas se verificaron con respuestas controladas.
+
+El diff se generó desde la copia archivada con la skill y contiene el fixture modificado y los dos archivos nuevos. Se verificó con git apply --check --reverse sin aplicarlo.

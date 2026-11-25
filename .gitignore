@@ -26,3 +26,7 @@ __pycache__/
 
 # Captura original del Día 3 con un correo personal
 /entregas/dia-03/evidencias/16-depurador-pausado.png
+
+# Copias locales de evidencias con datos personales y módulo legado
+/.evidencias-locales/
+/src/db/database.js

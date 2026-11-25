@@ -1,0 +1,17 @@
+{
+  "method": "skills/list",
+  "params": {
+    "cwds": [
+      "C:\\Users\\<usuario>\\Desktop\\mini-inventario"
+    ],
+    "forceReload": true
+  },
+  "skill": {
+    "name": "pruebas-inventario",
+    "description": "Crea, revisa y ejecuta pruebas de interfaz de Mini Inventario con Playwright. Úsala cuando se solicite automatizar o verificar flujos del inventario, como iniciar sesión, registrar, buscar, editar o eliminar productos.",
+    "path": "C:\\Users\\<usuario>\\Desktop\\mini-inventario\\.agents\\skills\\pruebas-inventario\\SKILL.md",
+    "scope": "repo",
+    "enabled": true,
+    "pluginId": null
+  }
+}
