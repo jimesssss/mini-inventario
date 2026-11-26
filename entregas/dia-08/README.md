@@ -52,6 +52,7 @@ El servidor y sus dependencias están en [`mcp-inventario/server.py`](../../mcp-
 - `npm test` pasó: **9 pruebas, 9 aprobadas, 0 fallidas**.
 - La acción `playwright` de GitHub Actions para el PR terminó con conclusión `success`.
 - El trabajo se integró en `main` mediante el [PR #18](https://github.com/jimesssss/mini-inventario/pull/18). La actualización de esta bitácora se publica aparte para conservar el historial de la entrega.
+- Los comandos, extractos de salida y enlaces verificables están en [evidencias del Día 8](evidencias/README.md).
 
 ## Bitácora de actividades
 
