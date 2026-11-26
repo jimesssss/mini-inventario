@@ -83,7 +83,14 @@ La acción `playwright` del [PR #18](https://github.com/jimesssss/mini-inventari
 - [Salida de `npm test`](npm-test.txt): salida completa de una ejecución local, con 9 pruebas aprobadas y 0 fallidas.
 - [Salida de la prueba MCP simulada](prueba-mcp-simulada.txt): resultados de las comprobaciones del servidor y de la entrada adversarial descritas arriba. El test no abrió conexión a Supabase.
 
-Son salidas de texto y un diff reproducible, equivalentes a evidencia documental del trabajo. No se presentan como capturas de pantalla ni como consultas reales a la base.
+### Capturas de GitHub
+
+Las imágenes se tomaron de las páginas reales del repositorio y de GitHub Actions, después de integrar los cambios. Muestran el diff, los resultados versionados y la ejecución de CI; no son capturas de una conversación de Codex ni de una consulta en vivo a Supabase.
+
+1. [Diff del servidor y archivos del Día 8](capturas/01-diff-implementacion-pr-18.png)
+2. [Salida de las 9 pruebas del proyecto](capturas/02-resultados-npm-test.png)
+3. [Prueba simulada del servidor MCP e inyección](capturas/03-prueba-mcp-simulada.png)
+4. [Ejecución exitosa de Playwright en GitHub Actions](capturas/04-ci-playwright-exitoso.png)
 
 ## 6. Verificación pendiente en vivo
 
