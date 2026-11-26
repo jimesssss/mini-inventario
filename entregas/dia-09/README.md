@@ -8,7 +8,8 @@ Empaquetar `mini-inventario` en una imagen de producción y comprobar el ciclo d
 
 - Servicio: `mini-inventario` (`srv-dc45ucflk1mc739nlua0`), conectado a la rama `main` del repositorio correcto.
 - URL pública: [https://mini-inventario-hbr5.onrender.com](https://mini-inventario-hbr5.onrender.com).
-- Comprobación: `GET /api/salud` debe devolver HTTP 200 y `{"estado":"ok"}`. **Estado posterior a la corrección: pendiente de verificar.**
+- Configuración observada por MCP: `autoDeploy=yes`, repositorio `jimesssss/mini-inventario`, rama `main`.
+- Comprobación: `GET /api/salud` debería devolver HTTP 200 y `{"estado":"ok"}`. Las peticiones realizadas durante esta sesión agotaron el tiempo de espera; no se obtuvo un HTTP 200 del servicio público.
 - El servicio usa Docker y su configuración apunta al `Dockerfile` en la raíz.
 - Se consultaron servicios, despliegues y logs desde el MCP oficial de Render en el workspace confirmado. No se modificaron variables de entorno ni se solicitó un despliegue desde MCP.
 
@@ -51,11 +52,21 @@ error: failed to solve: failed to read dockerfile: open Dockerfile: no such file
 error: exit status 1
 ```
 
-La URL pública no respondió durante las comprobaciones iniciales. Se publicará un commit de documentación para que el auto-despliegue de Git use el `Dockerfile` ya integrado en `main`; se verificará el resultado antes de probar el fallo solicitado.
+La URL pública no respondió durante las comprobaciones. Se publicó un commit de documentación (`4e8de269`) y luego el commit del fallo controlado (`ab342588`) en `main`. Aunque el servicio aparece vinculado y con `autoDeploy=yes`, Render siguió devolviendo solo el despliegue inicial, sin crear un despliegue para ninguno de esos commits. Se esperó más de 60 segundos tras el commit del fallo y se volvió a consultar la lista. La URL del dashboard compartida para ese despliegue redirigió a la pantalla de inicio de sesión; la API de solo lectura volvió a listar únicamente `dep-dc45ucnlk1mc739nlvgg`, commit `8d21845`.
 
 ## Fallo controlado `RUN npm run no-existe`
 
-**Pendiente.** Se añadirá temporalmente esa instrucción al `Dockerfile` después de comprobar que la aplicación está estable, se observará el despliegue originado por el push y se anotarán el estado y el error exacto de Render. La reparación eliminará únicamente esa línea y se comprobará la recuperación pública.
+El cambio temporal se publicó en `main` como `ab342588`, insertando `RUN npm run no-existe` en la línea 7. La construcción local reprodujo el error exacto:
+
+```text
+npm error Missing script: "no-existe"
+Dockerfile:7
+ERROR: process "/bin/sh -c npm run no-existe" did not complete successfully: exit code: 1
+```
+
+**Límite de evidencia de Render:** no se generó un despliegue de ese commit. Por tanto, no existen logs de Render para `RUN npm run no-existe` en esta sesión; los únicos logs visibles corresponden al fallo previo de `Dockerfile: no such file or directory`. No se atribuye el error local a Render.
+
+La instrucción fallida se eliminó. La imagen de producción se volvió a construir localmente con éxito y la suite pasó: 9 pruebas aprobadas, 0 fallidas. La reparación ya está publicada en `main` como `d19255a`; la recuperación de la URL pública queda sin verificar porque Render aún no muestra un despliegue de ese commit.
 
 ## Bitácora de actividades
 
@@ -64,11 +75,13 @@ La URL pública no respondió durante las comprobaciones iniciales. Se publicar�
 | 26 nov 2026 | Revisión de Docker y de la aplicación | Dockerfile de producción, `.dockerignore`, listener `0.0.0.0` y puerto configurable integrados en [PR #23](https://github.com/jimesssss/mini-inventario/pull/23). |
 | 26 nov 2026 | Pruebas locales | Imagen construida; contenedor temporal respondió 200 en `/api/salud`; suite del proyecto: 9/9. |
 | 26 nov 2026 | Consulta inicial a Render | MCP oficial consultado en el workspace confirmado; se identificó el servicio, la URL y un despliegue fallido por ausencia del Dockerfile en el commit previo. |
-| 26 nov 2026 | Prueba del fallo, diagnóstico y reparación | Pendiente de realizar y documentar con el resultado real de Render. |
+| 26 nov 2026 | Push inicial de evidencia | `4e8de269` se publicó en `main`; no apareció un despliegue nuevo en Render. |
+| 26 nov 2026 | Prueba controlada | `ab342588` se publicó con `RUN npm run no-existe`; la compilación local falló exactamente en `Dockerfile:7` por script inexistente. Tras esperar más de 60 segundos, Render seguía mostrando solo el despliegue inicial, sin logs del commit. |
+| 26 nov 2026 | Reparación y validación local | Se eliminó la línea deliberada; Docker volvió a construir la imagen y la suite pasó 9/9. `d19255a` se publicó en `main`, pero Render aún no muestra un despliegue nuevo y la recuperación pública sigue sin verificar. |
 
 ### Prompts y decisiones
 
 - **Prompt clave:** completar el Día 9 con Docker, servicio Render, despliegue fallido controlado, diagnóstico por logs y reparación.
-- **Decisión de la IA:** la primera llamada a listar servicios omitió `workspaceId` y el MCP la rechazó; se consultaron los workspaces y se pidió confirmación antes de usar el único espacio disponible. Se continuó únicamente después de la confirmación.
-- **Comando aprobado:** `docker build -t mini-inventario .`, seguido de `docker run ...`; se limitó la prueba a un contenedor local temporal y se eliminó al finalizar.
-- **Verificación del resultado:** pruebas locales, respuesta HTTP del contenedor, inspección de la rama y commit en GitHub, y consulta de despliegues/logs del servicio mediante herramientas de solo lectura del MCP oficial de Render.
+- **Decisión/error de la IA:** la primera consulta de servicios omitió `workspaceId` y MCP la rechazó; se pidió confirmación del workspace antes de reintentar. Además, el primer `docker build` se lanzó desde la raíz del workspace padre y falló porque allí no hay `Dockerfile`; se detectó por `open Dockerfile: no such file or directory` y se corrigió usando `mini-inventario-target` como contexto.
+- **Comando aprobado:** `docker build -t mini-inventario .` y la ejecución de un contenedor local temporal; se verificó `/api/salud` y se eliminó el contenedor. El comando `RUN npm run no-existe` se limitó a la prueba deliberada solicitada y se retiró inmediatamente tras registrar el error.
+- **Verificación del resultado:** suite (9/9), compilación de imagen reparada, rama y commits confirmados en GitHub; MCP confirmó el despliegue inicial fallido y que no hubo despliegue nuevo después de los pushes. La comprobación HTTP pública agotó el tiempo de espera, por lo que la restauración en Render no se declara completada.
