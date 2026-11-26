@@ -4,7 +4,6 @@ WORKDIR /app
 
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
-RUN npm run no-existe
 
 COPY src/ ./src/
 COPY public/ ./public/
