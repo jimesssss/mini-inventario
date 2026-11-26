@@ -1,0 +1,120 @@
+diff --git a/entregas/dia-08/README.md b/entregas/dia-08/README.md
+new file mode 100644
+index 0000000..5483e51
+--- /dev/null
++++ b/entregas/dia-08/README.md
+@@ -0,0 +1,30 @@
++# Bitácora del Día 8 · MCP
++
++## Evidencia de lectura/bloqueo de escritura
++
++- **Fecha y entorno:**
++- **Consulta de lectura ejecutada:**
++- **Evidencia de bloqueo de escritura:**
++- **Resultado observado:**
++
++## Comparativa MCP oficial vs. Servidor propio
++
++| Aspecto | MCP oficial de Supabase | Servidor propio de inventario |
++| --- | --- | --- |
++| Fuente de datos | | |
++| Herramientas disponibles | | |
++| Permisos y alcance | | |
++| Ventajas y límites | | |
++
++## Prueba de Prompt Injection
++
++- **Prompt de prueba:**
++- **Respuesta observada:**
++- **¿Se intentó ignorar instrucciones o escribir datos?:**
++- **Resultado y evidencia:**
++
++## Bitácora
++
++| Fecha/hora | Actividad | Resultado / evidencia |
++| --- | --- | --- |
++| | | |
+diff --git a/mcp-inventario/.env.example b/mcp-inventario/.env.example
+new file mode 100644
+index 0000000..41e5410
+--- /dev/null
++++ b/mcp-inventario/.env.example
+@@ -0,0 +1 @@
++DATABASE_URL="postgresql://inventario_lector.hxsseqjndqjfueapmeif:[TU_PASSWORD]@[TU_HOST_POOLER]:5432/postgres"
+diff --git a/mcp-inventario/requirements.txt b/mcp-inventario/requirements.txt
+new file mode 100644
+index 0000000..3706c5e
+--- /dev/null
++++ b/mcp-inventario/requirements.txt
+@@ -0,0 +1,3 @@
++mcp[cli]<2
++psycopg[binary]
++python-dotenv
+diff --git a/mcp-inventario/server.py b/mcp-inventario/server.py
+new file mode 100644
+index 0000000..4c45627
+--- /dev/null
++++ b/mcp-inventario/server.py
+@@ -0,0 +1,62 @@
++import os
++from pathlib import Path
++from typing import Any
++
++import psycopg
++from dotenv import load_dotenv
++from mcp.server.fastmcp import FastMCP
++from psycopg.rows import dict_row
++
++load_dotenv(Path(__file__).with_name(".env"))
++
++DATABASE_URL = os.getenv("DATABASE_URL")
++if not DATABASE_URL:
++    raise RuntimeError("DATABASE_URL no está definida en mcp-inventario/.env")
++
++mcp = FastMCP("inventario-lectura")
++
++
++def _fetch_read_only(
++    query: str, parameters: tuple[str, ...] = ()
++) -> list[dict[str, Any]]:
++    with psycopg.connect(DATABASE_URL, row_factory=dict_row) as connection:
++        with connection.cursor() as cursor:
++            cursor.execute("SET TRANSACTION READ ONLY")
++            cursor.execute(query, parameters)
++            return [dict(row) for row in cursor.fetchall()]
++
++
++@mcp.tool()
++def buscar_producto(texto: str) -> list[dict[str, Any]]:
++    """Busca productos por coincidencia parcial en nombre o SKU (el esquema no tiene categoría)."""
++    texto = texto.strip()
++    if not texto:
++        raise ValueError("El texto de búsqueda no puede estar vacío.")
++
++    patron = f"%{texto}%"
++    return _fetch_read_only(
++        """
++        SELECT nombre, sku, cantidad, minimo
++        FROM public.productos
++        WHERE nombre ILIKE %s OR sku ILIKE %s
++        ORDER BY nombre, sku
++        """,
++        (patron, patron),
++    )
++
++
++@mcp.tool()
++def stock_bajo() -> list[dict[str, Any]]:
++    """Devuelve productos cuya cantidad es menor o igual a su mínimo."""
++    return _fetch_read_only(
++        """
++        SELECT nombre, sku, cantidad, minimo
++        FROM public.productos
++        WHERE cantidad <= minimo
++        ORDER BY nombre, sku
++        """
++    )
++
++
++if __name__ == "__main__":
++    mcp.run()
