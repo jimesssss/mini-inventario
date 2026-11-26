@@ -1,0 +1,17 @@
+.env
+.env.*
+node_modules
+.git
+.github
+tests
+test
+entregas
+docs
+mcp-inventario
+.agents
+.codex
+.venv
+venv
+__pycache__
+*.py[cod]
+*.log

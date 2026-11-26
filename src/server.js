@@ -33,6 +33,6 @@ app.use((_error, _req, res, _next) => {
   res.status(500).json({ error: 'No se pudo completar la solicitud.' });
 });
 
-const servidor = app.listen(puerto, () => {
+const servidor = app.listen(puerto, '0.0.0.0', () => {
   console.log(`Mini Inventario está disponible en http://localhost:${servidor.address().port}`);
 });
