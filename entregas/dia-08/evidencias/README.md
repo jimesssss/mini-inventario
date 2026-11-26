@@ -77,6 +77,14 @@ Salida final de `npm test`:
 
 La acción `playwright` del [PR #18](https://github.com/jimesssss/mini-inventario/pull/18/checks) terminó con conclusión `success`. El PR fue fusionado en `main`; la bitácora se amplió después mediante el [PR #19](https://github.com/jimesssss/mini-inventario/pull/19).
 
-## 5. Verificación pendiente en vivo
+## 5. Archivos de evidencia
+
+- [Diff del cambio de implementación del PR #18](cambios-pr-18.diff): parche real contra la base previa al Día 8, con el servidor, sus dependencias, el ejemplo de entorno y la plantilla inicial.
+- [Salida de `npm test`](npm-test.txt): salida completa de una ejecución local, con 9 pruebas aprobadas y 0 fallidas.
+- [Salida de la prueba MCP simulada](prueba-mcp-simulada.txt): resultados de las comprobaciones del servidor y de la entrada adversarial descritas arriba. El test no abrió conexión a Supabase.
+
+Son salidas de texto y un diff reproducible, equivalentes a evidencia documental del trabajo. No se presentan como capturas de pantalla ni como consultas reales a la base.
+
+## 6. Verificación pendiente en vivo
 
 No se ejecutaron `buscar_producto` ni `stock_bajo` contra la base real: el `.env` local conserva los marcadores `[TU_PASSWORD]` y `[TU_HOST_POOLER]`. No se guarda ni reproduce aquí una contraseña compartida en el chat. Para completar esa evidencia, el responsable debe configurar localmente una cuenta PostgreSQL dedicada con `SELECT` únicamente, ejecutar ambas herramientas con datos autorizados y guardar resultados anonimizados, sin incluir secretos ni datos personales.
