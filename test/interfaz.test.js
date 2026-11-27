@@ -132,6 +132,15 @@ test('interfaz simulada: sesión, búsqueda, contador, alta, edición y eliminac
   assert.equal(filas[0].celdas[4].textContent, 'Existencias bajas');
 
   assert.match(contador(), /: 2$/);
+  buscar('agregar').eventos.click();
+  Object.entries({ nombre: 'Otro mouse', sku: ' 0001 ', cantidad: '1', minimo: '0' })
+    .forEach(([campo, valor]) => { buscar(campo).value = valor; });
+  const peticionesAntesDelDuplicado = peticiones.length;
+  await formulario.eventos.submit(evento);
+  assert.equal(peticiones.length, peticionesAntesDelDuplicado);
+  assert.equal(buscar('error-sku').textContent, 'Ya tienes un producto con ese SKU.');
+  buscar('cancelar-producto').eventos.click();
+
   filas[0].celdas.at(-1).hijos[0].hijos[0].eventos.click();
   assert.equal(buscar('sku').value, '0001');
   buscar('cantidad').value = '11';

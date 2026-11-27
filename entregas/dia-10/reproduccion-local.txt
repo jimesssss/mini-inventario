@@ -1,0 +1,7 @@
+[WebServer] .env not found. Continuing without it.
+
+Running 1 test using 1 worker
+
+  ok 1 tests\dia10-baseline-evidence.spec.js:11:1 › captura del formulario antes de la validación local (5.5s)
+
+  1 passed (23.6s)

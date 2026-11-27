@@ -1,0 +1,21 @@
+
+> mini-inventario@1.0.0 test
+> node --test
+
+✔ interfaz simulada: sesión, búsqueda, contador, alta, edición y eliminación (292.6273ms)
+✔ limpia por ID tras una aserción fallida aunque cambie el SKU (52.3058ms)
+✔ recupera un alta sin ID solo si coincide todo el producto sintético (1.4608ms)
+✔ rechaza el borrado si el SKU y el ID confirmado apuntan a filas distintas (1.6382ms)
+✔ rechaza el borrado sin ID si los datos sintéticos no coinciden (2.0351ms)
+✔ rechaza el borrado sin ID si hay más de una coincidencia por SKU (27.3071ms)
+✔ exige ausencia después del borrado por ID, SKU original y SKU encontrado (1.8677ms)
+✔ rutas de productos con Auth y Data API simuladas (1346.2155ms)
+✔ la configuración acepta la URL base y rechaza rutas de otras API (3.3239ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7497.8176

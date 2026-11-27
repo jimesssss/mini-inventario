@@ -1,0 +1,41 @@
+
+> mini-inventario@1.0.0 test
+> node --test
+
+✖ interfaz simulada: sesión, búsqueda, contador, alta, edición y eliminación (347.3139ms)
+✔ limpia por ID tras una aserción fallida aunque cambie el SKU (18.9855ms)
+✔ recupera un alta sin ID solo si coincide todo el producto sintético (2.7232ms)
+✔ rechaza el borrado si el SKU y el ID confirmado apuntan a filas distintas (1.163ms)
+✔ rechaza el borrado sin ID si los datos sintéticos no coinciden (1.1304ms)
+✔ rechaza el borrado sin ID si hay más de una coincidencia por SKU (3.403ms)
+✔ exige ausencia después del borrado por ID, SKU original y SKU encontrado (5.3889ms)
+✔ rutas de productos con Auth y Data API simuladas (1427.8196ms)
+✔ la configuración acepta la URL base y rechaza rutas de otras API (4.3658ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 8
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6351.3797
+
+✖ failing tests:
+
+test at test\interfaz.test.js:19:1
+✖ interfaz simulada: sesión, búsqueda, contador, alta, edición y eliminación (347.3139ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  2 !== 1
+  
+      at TestContext.<anonymous> (C:\Proyecto\PQ.worktrees\ya-estamos-en-la-rama-dia-08-mcp\mini-inventario-target\test\interfaz.test.js:140:10)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+EXIT=1

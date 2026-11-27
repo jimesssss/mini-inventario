@@ -127,6 +127,11 @@ function leerFormulario() {
       }
     }
   }
+  if (datos.sku && listaProductos.some((producto) =>
+    producto.id !== productoEnEdicion?.id &&
+    producto.sku.toLowerCase() === datos.sku.toLowerCase())) {
+    errores.sku = 'Ya tienes un producto con ese SKU.';
+  }
   return { datos, errores };
 }
 
