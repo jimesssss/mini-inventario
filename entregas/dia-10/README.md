@@ -21,15 +21,16 @@ La corrección valida el SKU sin distinguir mayúsculas/minúsculas contra los p
 - La prueba Playwright local, con Auth/API simuladas, pasa y confirma que no sale ningún POST duplicado: [playwright-verde.txt](./playwright-verde.txt).
 - Captura local de la validación corregida: ![Formulario que marca el SKU duplicado y evita el envío](./evidencia-corregido.png).
 - `npm test`: 9/9 pruebas aprobadas; incluye validación de servidor para cantidad inválida y manejo del error `23505`.
+- Se ejecutó Playwright contra la página pública de Render: la página y el JavaScript son los desplegados, el mensaje aparece y se confirma que no se envía ningún POST. Para aislar la prueba, Auth y `/api/productos` se simularon; por eso esta evidencia verifica la interfaz desplegada, no una sesión/backend real. Resultado: [render-ui-mock.txt](./render-ui-mock.txt); captura: ![Validación de SKU duplicado en la interfaz servida por Render; Auth y API simuladas](./evidencia-render-ui-mock.png).
 
 **Verificación de Supabase:** una consulta `SELECT` de solo lectura encontró 1 fila en `public.productos`, 0 cantidades negativas y 0 grupos con SKU repetido por usuario (comparación con `lower(sku)`). La consulta de esquema confirmó la restricción `productos_cantidad_no_negativa` (`CHECK (cantidad >= 0)`) y el índice único `productos_user_id_sku_unico`. No había filas que limpiar y no se modificaron datos ni esquema.
 
-**Límite de evidencia de producción:** Render responde 200 en `/api/salud`, pero no se obtuvieron logs que muestren un intento de alta. No fue posible iniciar sesión con un usuario de prueba desde esta sesión, así que no se reprodujo el formulario autenticado ni se tomó una captura real de producción. Las capturas adjuntas y las pruebas Playwright usan Auth/API simuladas; no deben interpretarse como evidencia visual de producción.
+**Límite de evidencia de producción:** Render responde 200 en `/api/salud` y la interfaz desplegada se comprobó con Playwright. No se obtuvieron logs de un intento real ni se inició sesión contra Supabase desde esta sesión; las credenciales de prueba no están configuradas localmente. Por lo tanto, sigue pendiente la comprobación autenticada de extremo a extremo contra la API/base de datos reales. La captura de Render muestra la interfaz real, pero Auth y API simuladas; no debe interpretarse como evidencia de una operación real en producción.
 
 ## Cierre del ciclo
 
 - **Aprendizaje:** la restricción de servidor/base de datos protege la integridad, pero la interfaz debe detectar errores previsibles antes de enviar la solicitud.
-- **Siguiente requisito:** verificar con una cuenta de prueba que el formulario desplegado rechaza un SKU duplicado, y capturar el flujo autenticado junto con logs del intento.
+- **Siguiente requisito:** con credenciales de prueba configuradas localmente, verificar que el formulario desplegado rechaza un SKU duplicado contra la sesión y API reales, y capturar los logs del intento.
 - **Delegaría:** una revisión independiente de accesibilidad y de la unicidad por propietario frente a los requisitos comerciales.
 - **Seguiría revisando:** despliegue de Render, ejecución de las pruebas E2E con las credenciales de CI y que las respuestas 409 continúen cubriendo carreras entre solicitudes.
 
@@ -38,6 +39,6 @@ La corrección valida el SKU sin distinguir mayúsculas/minúsculas contra los p
 - **Prompt clave:** completar el Día 10 evaluando los reportes de cantidad negativa y SKU duplicado, y corregir el caso aplicable con evidencia.
 - **Decisión y causa encontrada:** la cantidad negativa ya estaba rechazada en formulario/API/SQL; para SKU la persistencia también estaba protegida. Se enfocó el cambio en impedir el envío innecesario desde la interfaz, sin afirmar que hubiera corrupción de datos.
 - **Error de prueba detectado:** el primer Playwright usó `getByLabel('SKU')`, que coincidía tanto con el buscador como con el campo del formulario. Playwright reportó strict mode; se corrigió limitando el selector al formulario. La reproducción y las capturas antes/después usan una API simulada, no modifican datos.
-- **Comando aprobado:** `npm test` y `npx playwright test tests/dia10-sku.spec.js`; ambos pasan después del cambio. La primera ejecución TDD de `npm test` falló antes de la corrección como se esperaba.
+- **Comando aprobado:** `npm test` y `npx playwright test tests/dia10-sku.spec.js`; ambos pasan después del cambio. También se ejecutó Playwright en la URL de Render con Auth/API simuladas: mensaje visible, cero POST, captura guardada. La primera ejecución TDD de `npm test` falló antes de la corrección como se esperaba.
 - **Comando no ejecutado:** no se creó usuario de prueba ni se realizó Playwright autenticado contra Render porque las credenciales de prueba no estaban disponibles localmente. Sí se ejecutaron consultas `SELECT` de solo lectura en Supabase para contar filas y verificar restricciones; no se ejecutó SQL destructivo ni se atribuyeron logs no observados.
 - **Comprobación:** Playwright afirma que el mensaje aparece en el campo SKU y que no hubo POST; las 9 pruebas unitarias/API pasan. Render salud se verificó con HTTP 200.

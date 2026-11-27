@@ -1,0 +1,9 @@
+{
+  "result": "PASS",
+  "pageStatus": 200,
+  "origin": "https://mini-inventario-hbr5.onrender.com",
+  "duplicateMessage": "visible",
+  "duplicatePostCount": 0,
+  "authAndApi": "mocked",
+  "screenshot": "entregas/dia-10/evidencia-render-ui-mock.png"
+}
