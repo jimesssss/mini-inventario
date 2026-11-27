@@ -45,6 +45,25 @@ jobs:
           PLAYWRIGHT_SAFE_REPORT: ${{ runner.temp }}/playwright-report.json
         run: npx playwright test --reporter=./playwright-ci-reporter.cjs
 
+      - name: Verificar el SKU duplicado en Render
+        if: startsWith(github.head_ref, 'production-e2e/')
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_KEY }}
+          TEST_EMAIL: ${{ secrets.TEST_EMAIL }}
+          TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+          PLAYWRIGHT_BASE_URL: https://mini-inventario-hbr5.onrender.com
+        run: npx playwright test --config=playwright.production.config.js
+
+      - name: Subir evidencia autenticada de Render
+        if: ${{ always() && startsWith(github.head_ref, 'production-e2e/') }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: dia10-render-authenticated-evidence
+          path: test-results/dia10-production
+          if-no-files-found: ignore
+          retention-days: 14
+
       - name: Subir reporte de Playwright
         if: ${{ always() }}
         uses: actions/upload-artifact@v4

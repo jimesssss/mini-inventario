@@ -12,6 +12,7 @@ const enCI = process.env.CI === 'true';
 
 module.exports = defineConfig({
   testDir: './tests',
+  testIgnore: '**/dia10-produccion.spec.js',
   fullyParallel: false,
   workers: 1,
   retries: 0,
