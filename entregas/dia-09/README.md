@@ -9,9 +9,14 @@ Empaquetar `mini-inventario` en una imagen de producción y comprobar el ciclo d
 - Servicio: `mini-inventario` (`srv-dc45ucflk1mc739nlua0`), conectado a la rama `main` del repositorio correcto.
 - URL pública: [https://mini-inventario-hbr5.onrender.com](https://mini-inventario-hbr5.onrender.com).
 - Configuración observada por MCP: `autoDeploy=yes`, repositorio `jimesssss/mini-inventario`, rama `main`.
-- Comprobación final: `GET /api/salud` devolvió HTTP 200 y `{"estado":"ok"}` tras el despliegue corregido. Las peticiones anteriores al despliegue agotaron el tiempo de espera.
+- El MCP oficial de Render se usó solo para lectura de servicios, despliegues y logs. La escritura de variables desde la API fue rechazada con HTTP 403; la configuración se completó después desde el dashboard de Render.
+- Variables de entorno configuradas en Render: `SUPABASE_URL` y `SUPABASE_PUBLISHABLE_KEY`. Se corrigió `SUPABASE_URL` para apuntar al proyecto Supabase (`hxsseqjndqjfueapmeif`) y se configuró la clave publishable vigente. No se guardó ni se incluyó su valor en Git.
+- Despliegue posterior a la configuración: `dep-dc4dp3bl550s739010i0`, estado `live`.
+- Comprobaciones finales: `GET /api/salud` devolvió HTTP 200; `GET /api/configuracion` devolvió HTTP 200 y se validaron en memoria el proyecto objetivo y el prefijo publishable, sin imprimir la clave. La API de salud de Supabase respondió HTTP 200.
+- La consulta REST de `productos` sin sesión devolvió HTTP 401 y `/api/productos` sin sesión devolvió HTTP 401. No se creó una cuenta de prueba ni se modificaron datos; la consulta protegida requiere una sesión autenticada y respeta RLS.
+- Evidencia GitHub: el [PR #23](https://github.com/jimesssss/mini-inventario/pull/23) está fusionado en `main` y su verificación Playwright terminó correctamente. La suite local actual también pasa (9/9).
 - El servicio usa Docker y su configuración apunta al `Dockerfile` en la raíz.
-- Se consultaron servicios, despliegues y logs desde el MCP oficial de Render en el workspace confirmado. No se modificaron variables de entorno ni se solicitó un despliegue desde MCP.
+- Los cambios de configuración y el redeploy se realizaron desde el dashboard autenticado, no desde el MCP.
 
 ## Dockerfile, línea por línea
 
@@ -115,10 +120,16 @@ Las capturas se tomaron del dashboard autenticado de Render y de la respuesta p�
 | 26 nov 2026 | Prueba controlada y espera de auto-deploy | `ab342588` se publicó con `RUN npm run no-existe`; al esperar más de 60 segundos no apareció un despliegue automático, aunque el servicio estaba enlazado a `main`. |
 | 27 nov 2026 | Despliegue fallido y diagnóstico (punto 9) | Desde el dashboard se desplegó específicamente `ab342588`. Render registró `dep-dc4cg2m1egvs738076j0` como `build_failed`: `npm error Missing script: "no-existe"`, `Dockerfile:7`, salida 1. El dashboard muestra el paso `[5/7] RUN npm run no-existe`. |
 | 27 nov 2026 | Reparación y comprobación pública | Se desplegó `5d0e866` (Dockerfile corregido); Render lo marcó `live`. `/api/salud` respondió HTTP 200 con `{"estado":"ok"}` y `autoDeploy=yes` quedó restaurado. |
+| 27 nov 2026 | Conexión de Render con Supabase | Se detectó que Render tenía una URL del dashboard de Supabase en lugar de la URL del proyecto y una variable de clave con nombre distinto al que espera la app. Se corrigieron `SUPABASE_URL` y `SUPABASE_PUBLISHABLE_KEY` desde el dashboard; el redeploy `dep-dc4dp3bl550s739010i0` quedó `live`. `/api/configuracion` y `/auth/v1/health` devolvieron 200. |
+| 27 nov 2026 | Verificación de acceso protegido | Las peticiones sin sesión a REST `productos` y `/api/productos` respondieron 401; no se consultaron ni alteraron filas de usuario. Para probar CRUD se requiere una sesión válida. |
+| 27 nov 2026 | Verificación GitHub y pruebas | El PR #23 está fusionado en `main`; su comprobación Playwright terminó `success`. La suite local volvió a pasar: 9/9. |
 
 ### Prompts y decisiones
 
 - **Prompt clave:** completar el Día 9 con Docker, servicio Render, despliegue fallido controlado, diagnóstico por logs y reparación.
 - **Decisión/error de la IA:** la primera consulta de servicios omitió `workspaceId` y MCP la rechazó; se pidió confirmación del workspace antes de reintentar. Además, el primer `docker build` se lanzó desde la raíz del workspace padre y falló porque allí no hay `Dockerfile`; se detectó por `open Dockerfile: no such file or directory` y se corrigió usando `mini-inventario-target` como contexto.
 - **Comando aprobado:** `docker build -t mini-inventario .` y el contenedor local temporal se validaron con `/api/salud` y se eliminaron al terminar. Para satisfacer el punto 9, se aprobó desplegar manualmente `ab342588`; Render advirtió que eso desactiva el auto-deploy. Tras guardar los logs, se desplegó la revisión corregida y se reactivó `On Commit`.
-- **Verificación del resultado:** el dashboard y el historial de solo lectura de Render confirman el fallo del commit `ab342588`, el error exacto en `Dockerfile:7` y el despliegue corregido `5d0e866` en estado `live`. La URL pública respondió HTTP 200. Las 9 pruebas locales siguen aprobadas.
+- **Prompt clave adicional:** completar también la integración de Supabase, Render y GitHub, sin versionar credenciales.
+- **Decisión/error adicional de la IA:** inicialmente se atribuyó el HTTP 503 a una variable ausente. La respuesta 503 se volvió a probar después del redeploy; la inspección de Render mostró que `SUPABASE_URL` era una URL del dashboard y que la clave estaba bajo `SUPABASE_KEY`. Se corrigieron ambos nombres/valores y se volvió a desplegar.
+- **Comando rechazado:** la escritura vía API de Render no se forzó tras recibir HTTP 403; se evitó usar una operación de reemplazo total de variables que pudiera borrar configuración existente. La modificación se hizo de forma acotada en el dashboard.
+- **Verificación del resultado:** el dashboard confirma el despliegue `dep-dc4dp3bl550s739010i0` en `live`; Render `/api/salud` y `/api/configuracion` respondieron HTTP 200. La API de Auth de Supabase respondió HTTP 200 al usar la clave publishable recibida en memoria desde la configuración de Render; la clave no se imprimió ni se versionó. Las solicitudes sin sesión a productos reciben HTTP 401, como exige la autenticación; no se creó usuario ni se modificaron filas, por lo que un CRUD con sesión real queda fuera de esta evidencia. El PR #23 y su check Playwright están completados y las 9 pruebas locales pasan.
