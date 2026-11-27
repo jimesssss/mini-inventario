@@ -9,7 +9,7 @@ Empaquetar `mini-inventario` en una imagen de producción y comprobar el ciclo d
 - Servicio: `mini-inventario` (`srv-dc45ucflk1mc739nlua0`), conectado a la rama `main` del repositorio correcto.
 - URL pública: [https://mini-inventario-hbr5.onrender.com](https://mini-inventario-hbr5.onrender.com).
 - Configuración observada por MCP: `autoDeploy=yes`, repositorio `jimesssss/mini-inventario`, rama `main`.
-- Comprobación: `GET /api/salud` debería devolver HTTP 200 y `{"estado":"ok"}`. Las peticiones realizadas durante esta sesión agotaron el tiempo de espera; no se obtuvo un HTTP 200 del servicio público.
+- Comprobación final: `GET /api/salud` devolvió HTTP 200 y `{"estado":"ok"}` tras el despliegue corregido. Las peticiones anteriores al despliegue agotaron el tiempo de espera.
 - El servicio usa Docker y su configuración apunta al `Dockerfile` en la raíz.
 - Se consultaron servicios, despliegues y logs desde el MCP oficial de Render en el workspace confirmado. No se modificaron variables de entorno ni se solicitó un despliegue desde MCP.
 
@@ -57,7 +57,7 @@ error: exit status 1
 
 **Causa exacta del fallo de Render:** el commit que Render compiló no incluía un `Dockerfile` en la ruta configurada (`./Dockerfile`). La fase de carga del build context recibió un Dockerfile de 2 bytes y BuildKit no pudo abrirlo. No hay una línea de Dockerfile que señalar: el archivo no existía en el commit desplegado. Render marcó el build como fallido con código de salida 1.
 
-Después se publicó el commit de documentación (`4e8de269`) y el commit con el fallo intencional (`ab342588`). Aunque la configuración del servicio indica rama `main` y `autoDeploy=yes`, la consulta de despliegues no encontró nuevos builds para esos commits. El historial y los eventos de Render continúan mostrando solo el primer despliegue (`dep-dc45ucnlk1mc739nlvgg`, commit `8d21845`). Se esperó más de 60 segundos tras `ab34258` y se volvió a consultar el historial. Por ello, el despliegue real del comando intencional no llegó a ocurrir y no tiene logs de Render que permitan atribuirle una causa de plataforma.
+Después se publicó el commit de documentación (`4e8de269`) y el commit con el fallo intencional (`ab342588`). Aunque la configuración estaba en rama `main` y `autoDeploy=yes`, no se inició un build automático para esos commits. Tras esperar más de 60 segundos y revisar el historial, se seleccionó `ab342588` desde **Manual Deploy → Deploy a specific commit** en el dashboard autenticado de Render para poder ejecutar el diagnóstico solicitado. Render creó el despliegue `dep-dc4cg2m1egvs738076j0`, que terminó en `build_failed`. El historial registra además el evento `auto_deploy_disabled` generado por el despliegue manual; tras desplegar la versión corregida, se reactivó `On Commit` y se verificó de nuevo `autoDeploy=yes`.
 
 ## Fallo controlado `RUN npm run no-existe`
 
@@ -69,9 +69,23 @@ Dockerfile:7
 ERROR: process "/bin/sh -c npm run no-existe" did not complete successfully: exit code: 1
 ```
 
-**Diagnóstico del punto 9:** los logs reales consultados en Render corresponden al primer despliegue y prueban el error `open Dockerfile: no such file or directory` descrito arriba. El despliegue con `RUN npm run no-existe` no aparece en el historial de Render; en consecuencia, el mensaje de npm que sigue es la reproducción local de la instrucción y no un log del servicio:
+**Diagnóstico del punto 9:** los logs del despliegue real de Render `dep-dc4cg2m1egvs738076j0` (commit `ab342588ec72b5525c3cbc65789746eb9a63232f`) muestran que BuildKit ejecutó el paso `[5/7] RUN npm run no-existe` y terminó con:
 
-La instrucción fallida se eliminó. La imagen de producción se volvió a construir localmente con éxito y la suite pasó: 9 pruebas aprobadas, 0 fallidas. La reparación ya está publicada en `main` como `d19255a`; la recuperación de la URL pública queda sin verificar porque Render aún no muestra un despliegue de ese commit.
+```text
+#10 [5/7] RUN npm run no-existe
+#10 0.156 npm error Missing script: "no-existe"
+#10 ERROR: process "/bin/sh -c npm run no-existe" did not complete successfully: exit code: 1
+error: failed to solve: process "/bin/sh -c npm run no-existe" did not complete successfully: exit code: 1
+```
+
+Render identifica la línea exacta:
+
+```text
+Dockerfile:7
+7 | >>> RUN npm run no-existe
+```
+
+La causa es que `package.json` no define un script llamado `no-existe`; `npm run` sale con código 1 y BuildKit aborta la construcción. El despliegue controlado terminó en `build_failed` tras 24.7 segundos. La instrucción se retiró en `d19255a`. Después se desplegó la revisión corregida actual (`5d0e866`) y Render la marcó `live`. Se verificó `GET https://mini-inventario-hbr5.onrender.com/api/salud`: HTTP 200, `{"estado":"ok"}`. La configuración quedó con auto-deploy `On Commit` (`autoDeploy=yes`).
 
 ## Bitácora de actividades
 
@@ -82,12 +96,13 @@ La instrucción fallida se eliminó. La imagen de producción se volvió a const
 | 26 nov 2026 | Consulta inicial a Render | MCP oficial consultado en el workspace confirmado; se identificó el servicio, la URL y un despliegue fallido por ausencia del Dockerfile en el commit previo. |
 | 26 nov 2026 | Push inicial de evidencia | `4e8de269` se publicó en `main`; no apareció un despliegue nuevo en Render. |
 | 26 nov 2026 | Diagnóstico de despliegue (punto 9) | En el dashboard y en el historial de solo lectura se consultaron `dep-dc45ucnlk1mc739nlvgg` y sus logs: primer despliegue de `8d21845`, build fallido porque no existía `./Dockerfile`; BuildKit terminó con `exit status 1`. No hay número de línea porque el archivo no estaba presente en ese commit. |
-| 26 nov 2026 | Prueba controlada | `ab342588` se publicó con `RUN npm run no-existe`; la compilación local falló exactamente en `Dockerfile:7` por script inexistente. Tras esperar más de 60 segundos, el historial de Render seguía mostrando solo el despliegue inicial, por lo que no hay logs de Render para ese comando. |
-| 26 nov 2026 | Reparación y validación local | Se eliminó la línea deliberada; Docker volvió a construir la imagen y la suite pasó 9/9. `d19255a` se publicó en `main`, pero Render aún no muestra un despliegue nuevo y la recuperación pública sigue sin verificar. |
+| 26 nov 2026 | Prueba controlada y espera de auto-deploy | `ab342588` se publicó con `RUN npm run no-existe`; al esperar más de 60 segundos no apareció un despliegue automático, aunque el servicio estaba enlazado a `main`. |
+| 27 nov 2026 | Despliegue fallido y diagnóstico (punto 9) | Desde el dashboard se desplegó específicamente `ab342588`. Render registró `dep-dc4cg2m1egvs738076j0` como `build_failed`: `npm error Missing script: "no-existe"`, `Dockerfile:7`, salida 1. El dashboard muestra el paso `[5/7] RUN npm run no-existe`. |
+| 27 nov 2026 | Reparación y comprobación pública | Se desplegó `5d0e866` (Dockerfile corregido); Render lo marcó `live`. `/api/salud` respondió HTTP 200 con `{"estado":"ok"}` y `autoDeploy=yes` quedó restaurado. |
 
 ### Prompts y decisiones
 
 - **Prompt clave:** completar el Día 9 con Docker, servicio Render, despliegue fallido controlado, diagnóstico por logs y reparación.
 - **Decisión/error de la IA:** la primera consulta de servicios omitió `workspaceId` y MCP la rechazó; se pidió confirmación del workspace antes de reintentar. Además, el primer `docker build` se lanzó desde la raíz del workspace padre y falló porque allí no hay `Dockerfile`; se detectó por `open Dockerfile: no such file or directory` y se corrigió usando `mini-inventario-target` como contexto.
-- **Comando aprobado:** `docker build -t mini-inventario .` y la ejecución de un contenedor local temporal; se verificó `/api/salud` y se eliminó el contenedor. El comando `RUN npm run no-existe` se limitó a la prueba deliberada solicitada y se retiró inmediatamente tras registrar el error.
-- **Verificación del resultado:** suite (9/9), compilación de imagen reparada, rama y commits confirmados en GitHub; el dashboard y la API de solo lectura de Render confirman que el primer despliegue falló por ausencia del Dockerfile y que no hubo despliegue nuevo para `ab34258`. La comprobación HTTP pública agotó el tiempo de espera, por lo que la restauración en Render no se declara completada.
+- **Comando aprobado:** `docker build -t mini-inventario .` y el contenedor local temporal se validaron con `/api/salud` y se eliminaron al terminar. Para satisfacer el punto 9, se aprobó desplegar manualmente `ab342588`; Render advirtió que eso desactiva el auto-deploy. Tras guardar los logs, se desplegó la revisión corregida y se reactivó `On Commit`.
+- **Verificación del resultado:** el dashboard y el historial de solo lectura de Render confirman el fallo del commit `ab342588`, el error exacto en `Dockerfile:7` y el despliegue corregido `5d0e866` en estado `live`. La URL pública respondió HTTP 200. Las 9 pruebas locales siguen aprobadas.
