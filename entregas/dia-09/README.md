@@ -87,6 +87,22 @@ Dockerfile:7
 
 La causa es que `package.json` no define un script llamado `no-existe`; `npm run` sale con código 1 y BuildKit aborta la construcción. El despliegue controlado terminó en `build_failed` tras 24.7 segundos. La instrucción se retiró en `d19255a`. Después se desplegó la revisión corregida actual (`5d0e866`) y Render la marcó `live`. Se verificó `GET https://mini-inventario-hbr5.onrender.com/api/salud`: HTTP 200, `{"estado":"ok"}`. La configuración quedó con auto-deploy `On Commit` (`autoDeploy=yes`).
 
+## Capturas de evidencia
+
+Las capturas se tomaron del dashboard autenticado de Render y de la respuesta pública después del despliegue reparado:
+
+1. Build de Render que muestra la instrucción `RUN npm run no-existe` y el fallo de BuildKit:
+
+   ![Log de Render con el fallo de Dockerfile en la línea 7](evidencias/capturas/01-render-fallo-linea-7.png)
+
+2. Log de Render con `npm error Missing script: "no-existe"` y la referencia a `Dockerfile:7`:
+
+   ![Error de script inexistente en los logs de Render](evidencias/capturas/02-render-npm-missing-script.png)
+
+3. Respuesta pública del endpoint de salud tras la reparación; el estado HTTP 200 se verificó por separado con la petición:
+
+   ![Respuesta JSON del endpoint público de salud](evidencias/capturas/03-render-api-salud-200.png)
+
 ## Bitácora de actividades
 
 | Fecha | Actividad | Resultado / evidencia |
