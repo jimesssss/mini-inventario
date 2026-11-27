@@ -17,6 +17,7 @@ La corrección valida el SKU sin distinguir mayúsculas/minúsculas contra los p
 ## Evidencia
 
 - La prueba de interfaz añadida falla antes de la corrección: esperaba que no se enviara el POST, pero observó que el contador de solicitudes aumentó (`2 !== 1`). Salida completa: [prueba-antes-de-corregir.txt](./prueba-antes-de-corregir.txt).
+- Captura del flujo antes de la corrección, reproducido localmente con el JavaScript de `main` y Auth/API simuladas: ![Flujo anterior: el formulario envía el SKU repetido y la API devuelve 409](./evidencia-reproduccion.png). La ejecución está en [reproduccion-local.txt](./reproduccion-local.txt).
 - La prueba Playwright local, con Auth/API simuladas, pasa y confirma que no sale ningún POST duplicado: [playwright-verde.txt](./playwright-verde.txt).
 - Captura local de la validación corregida: ![Formulario que marca el SKU duplicado y evita el envío](./evidencia-corregido.png).
 - `npm test`: 9/9 pruebas aprobadas; incluye validación de servidor para cantidad inválida y manejo del error `23505`.
@@ -34,7 +35,7 @@ La corrección valida el SKU sin distinguir mayúsculas/minúsculas contra los p
 
 - **Prompt clave:** completar el Día 10 evaluando los reportes de cantidad negativa y SKU duplicado, y corregir el caso aplicable con evidencia.
 - **Decisión y causa encontrada:** la cantidad negativa ya estaba rechazada en formulario/API/SQL; para SKU la persistencia también estaba protegida. Se enfocó el cambio en impedir el envío innecesario desde la interfaz, sin afirmar que hubiera corrupción de datos.
-- **Error de prueba detectado:** el primer Playwright usó `getByLabel('SKU')`, que coincidía tanto con el buscador como con el campo del formulario. Playwright reportó strict mode; se corrigió limitando el selector al formulario.
+- **Error de prueba detectado:** el primer Playwright usó `getByLabel('SKU')`, que coincidía tanto con el buscador como con el campo del formulario. Playwright reportó strict mode; se corrigió limitando el selector al formulario. La reproducción y las capturas antes/después usan una API simulada, no modifican datos.
 - **Comando aprobado:** `npm test` y `npx playwright test tests/dia10-sku.spec.js`; ambos pasan después del cambio. La primera ejecución TDD de `npm test` falló antes de la corrección como se esperaba.
 - **Comando no ejecutado:** no se creó usuario ni se consultó/modificó la tabla de producción porque las credenciales/MCP de Supabase no estaban disponibles en el proceso. No se ejecutó SQL destructivo ni se atribuyeron logs no observados.
 - **Comprobación:** Playwright afirma que el mensaje aparece en el campo SKU y que no hubo POST; las 9 pruebas unitarias/API pasan. Render salud se verificó con HTTP 200.
