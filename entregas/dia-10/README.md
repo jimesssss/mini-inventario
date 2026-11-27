@@ -3,7 +3,7 @@
 ## Enlaces y estado
 
 - Issue: [#24 — Validar SKU duplicado antes de enviar el formulario](https://github.com/jimesssss/mini-inventario/issues/24)
-- Pull Request: pendiente de crear desde la rama `dia-10-incidente`.
+- Pull Request: [#25 — validar SKU duplicado antes de enviar](https://github.com/jimesssss/mini-inventario/pull/25).
 - Aplicación: [https://mini-inventario-hbr5.onrender.com](https://mini-inventario-hbr5.onrender.com)
 
 ## Incidente y causa
